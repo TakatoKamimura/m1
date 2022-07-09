@@ -7,6 +7,7 @@ from collections import OrderedDict
 from models import models as Model
 from dataset import dataset as Data
 
+#torch.set_default_tensor_type('torch.cuda.FloatTensor')
 class AverageMeter(object):#損失の推移を確認する用のクラス
     """
     Computes and stores the average and current value
@@ -50,7 +51,7 @@ def acc(input, labels):
 def train(num_epoch):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     dataset = Data.MyDataset()
-    data_loader = DataLoader(dataset,batch_size=10,shuffle=True, drop_last=True)
+    data_loader = DataLoader(dataset,batch_size=1,shuffle=True, drop_last=True)
     model=Model.BERT_A()
 
     criterion = nn.BCEWithLogitsLoss()
@@ -65,43 +66,23 @@ def train(num_epoch):
                       total=len(data_loader),
                       leave=False) as batch_bar:
                 for i, (batch, label) in batch_bar:
-                    batch = list(batch)
+                    # batch = list(batch)#タプルをリストに
+                    label=label.view(-1,1)
                     optimizer.zero_grad()#勾配の初期化
                     output = model(batch)#順伝搬
-                    
                     loss = criterion(output, label)
                     loss.backward()#誤差逆伝搬
                     optimizer.step()#重みの更新
-                    train_loss.update(loss,len(batch))
+                    train_loss.update(loss,1)
                     #output = sigmoid(output.detach())
                     #print(output)
                     a=acc(output,label)
                     print(a)
-                    train_acc.update(a, len(batch))
+                    train_acc.update(a, 1)
                     batch_bar.set_postfix(OrderedDict(loss=train_loss.val, acc=train_acc.val))
             print(f"train_loss:avg{train_loss.avg}")
             print(f"train_acc:avg{train_acc.avg}")
 
 
+train(1)
 
-
-
-# input = torch.Tensor([-0.3, 0.4])
-# print(input)
-# labels = torch.ones([2])
-# bs = input.size(0)
-# print(bs)
-# sigmoid = nn.Sigmoid()
-# output = list(sigmoid(input))
-# print(output)
-# preds = []
-# for out in output:
-#     if out >= 0.5:
-#         preds.append(1)
-#     else:
-#         preds.append(0)
-# preds = torch.Tensor(preds)
-# print(preds)
-# acc = preds.eq(labels).sum().item()
-# print(acc/bs)
-train(10)
