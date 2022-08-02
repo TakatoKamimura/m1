@@ -33,7 +33,7 @@ class AverageMeter(object):#損失の推移を確認する用のクラス
 
 def acc(input, labels):
     bs = input.size(0)
-    print(bs)
+    # print(bs)
     sigmoid = nn.Sigmoid()
     output = list(sigmoid(input))
     preds = []
@@ -84,5 +84,6 @@ def train(num_epoch):
             print(f"train_acc:avg{train_acc.avg}")
 
 
-train(1)
+train(5)
+
 
