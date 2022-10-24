@@ -4,7 +4,7 @@ import openpyxl as op
 wb = op.Workbook()
 sheet=wb.active
 sheet.title="チャットリプレイ"
-stream = pytchat.create(video_id = "b0mRw0AyCbc")
+stream = pytchat.create(video_id = "7lOFv3Tj4LE")
 cnt=2
 cnt1=0
 i = 0
@@ -33,7 +33,7 @@ stream.terminate
 end_time=time.time()
 print(end_time-start_time)
 stream.terminate()
-wb.save("ひなーの.csv")
+wb.save("最新.csv")
 wb.close()
 
 # retrieve chatdata from the continuation.

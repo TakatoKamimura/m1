@@ -36,13 +36,16 @@ def acc(input, labels):
     # print(bs)
     sigmoid = nn.Sigmoid()
     output = list(sigmoid(input))
+    print(output[0])
     preds = []
     for out in output:
         if out >= 0.5:
             preds.append(1)
         else:
             preds.append(0)
+    print('ラベル：',end='')
     print(labels)
+    print('予測：',end='')
     print(preds)
     preds = torch.Tensor(preds)
     acc = preds.eq(labels).sum().item()
@@ -67,6 +70,7 @@ def train(num_epoch):
                       leave=False) as batch_bar:
                 for i, (batch, label) in batch_bar:
                     # batch = list(batch)#タプルをリストに
+                    #print(batch)
                     label=label.view(-1,1)
                     optimizer.zero_grad()#勾配の初期化
                     output = model(batch)#順伝搬
