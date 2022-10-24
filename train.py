@@ -70,7 +70,7 @@ def train(num_epoch):
                     label=label.view(-1,1)
                     optimizer.zero_grad()#勾配の初期化
                     output = model(batch)#順伝搬
-                    loss = criterion(output, label)
+                    loss = criterion(output, label)#損失の計算
                     loss.backward()#誤差逆伝搬
                     optimizer.step()#重みの更新
                     train_loss.update(loss,1)
