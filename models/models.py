@@ -17,10 +17,9 @@ class BERT_A(nn.Module):
         # ids = input["input_ids"]
         # tokens_tensor = input.reshape(1, -1)
         output = self.bert(input).last_hidden_state[:, 0, :]
-        # output = self.bert(input).pooler_output#最終出力の分全体の特徴量
-        output = self.fc(output)
+        output = self.fc(output)#順伝搬の出力
         sigmoid = nn.Sigmoid()
-        output=sigmoid(output)
+        output=sigmoid(output)#シグモイドに通す
         return output
     
     

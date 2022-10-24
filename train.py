@@ -86,8 +86,7 @@ def train(num_epoch):
                     batch_bar.set_postfix(OrderedDict(loss=train_loss.val, acc=train_acc.val))
             print(f"train_loss:avg{train_loss.avg}")
             print(f"train_acc:avg{train_acc.avg}")
-
-
+            
 train(5)
 
 
