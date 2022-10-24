@@ -34,8 +34,8 @@ class AverageMeter(object):#損失の推移を確認する用のクラス
 def acc(input, labels):
     bs = input.size(0)
     # print(bs)
-    sigmoid = nn.Sigmoid()
-    output = list(sigmoid(input))
+    # sigmoid = nn.Sigmoid()
+    output = list(input)
     print(output[0])
     preds = []
     for out in output:
