@@ -34,8 +34,9 @@ class AverageMeter(object):#損失の推移を確認する用のクラス
 def acc(input, labels):
     bs = input.size(0)
     # print(bs)
-    # sigmoid = nn.Sigmoid()
-    output = list(input)
+    sigmoid = nn.Sigmoid()
+    output=sigmoid(input)
+    output = list(output)
     print(output[0])
     preds = []
     for out in output:
@@ -86,7 +87,7 @@ def train(num_epoch):
                     batch_bar.set_postfix(OrderedDict(loss=train_loss.val, acc=train_acc.val))
             print(f"train_loss:avg{train_loss.avg}")
             print(f"train_acc:avg{train_acc.avg}")
-            
+
 train(5)
 
 
