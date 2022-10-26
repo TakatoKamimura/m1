@@ -58,7 +58,7 @@ def train(num_epoch):
     train_dataset,test_dataset=torch.utils.data.random_split(dataset, [int(len(dataset)*0.8), len(dataset)-int(len(dataset)*0.8)])
     print(len(train_dataset))
     data_loader = DataLoader(train_dataset,batch_size=1,shuffle=True, drop_last=True)
-    model=Model.BERT_A()
+    model=Model.BERT_B()
     criterion = nn.BCEWithLogitsLoss()
     optimizer = torch.optim.AdamW(params=model.fc.parameters(), lr=1e-3)
 
