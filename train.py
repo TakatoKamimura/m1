@@ -56,7 +56,7 @@ def train(num_epoch):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     dataset = Data.MyDataset()
     train_dataset,test_dataset=torch.utils.data.random_split(dataset, [int(len(dataset)*0.8), len(dataset)-int(len(dataset)*0.8)])
-    print(len(train_dataset))
+    # print(len(train_dataset))
     data_loader = DataLoader(train_dataset,batch_size=1,shuffle=True, drop_last=True)
     model=Model.BERT_B()
     criterion = nn.BCEWithLogitsLoss()
