@@ -55,11 +55,13 @@ def acc(input, labels):
 def train(num_epoch):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     dataset = Data.MyDataset()
-    data_loader = DataLoader(dataset,batch_size=1,shuffle=True, drop_last=True)
+    train_dataset,test_dataset=torch.utils.data.random_split(dataset, [int(len(dataset)*0.8), len(dataset)-int(len(dataset)*0.8)])
+    print(len(train_dataset))
+    data_loader = DataLoader(train_dataset,batch_size=1,shuffle=True, drop_last=True)
     model=Model.BERT_A()
-
     criterion = nn.BCEWithLogitsLoss()
     optimizer = torch.optim.AdamW(params=model.fc.parameters(), lr=1e-3)
+
     with tqdm(range(num_epoch)) as epoch_bar:
         for epoch in epoch_bar:
             train_loss=AverageMeter()
@@ -85,9 +87,21 @@ def train(num_epoch):
                     print(a)
                     train_acc.update(a, 1)
                     batch_bar.set_postfix(OrderedDict(loss=train_loss.val, acc=train_acc.val))
+            # model.eval()
+            # with torch.no_grad():
+            #     with tqdm(enumerate(data_loader),
+            #             total=len(data_loader),
+            #             leave=False) as batch_bar:
+            #         for i, (batch, label) in batch_bar:
+            #             output=model(batch)
+            #             loss=criterion(output,label)
+            #             a=acc(output,label)
+            #             print(a)
+                
+
             print(f"train_loss:avg{train_loss.avg}")
             print(f"train_acc:avg{train_acc.avg}")
 
-train(5)
+train(1)
 
 
