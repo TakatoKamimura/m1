@@ -4,23 +4,27 @@ import openpyxl as op
 wb = op.Workbook()
 sheet=wb.active
 sheet.title="チャットリプレイ"
-stream = pytchat.create(video_id = "7lOFv3Tj4LE")
+stream = pytchat.create(video_id = "R2wPTYbHBfA")
 cnt=2
 cnt1=0
 i = 0
+sheet["A1"].value=('時間')
+sheet["B1"].value=('コメント')
 start_time=time.time()
 while stream.is_alive():
   data = stream.get()
   items = data.items
   for c in items:
-      print(f"{c.timestamp},{c.message}")
+      print(f"{c.timestamp},{c.message},{c.messageEx}")
       sel1="A"+str(cnt)
       sel2="B"+str(cnt)
+    #   sel3="C"+str(cnt)
       if cnt1==0:
           start=c.timestamp
           cnt1+=1
       sheet[sel1].value=(c.timestamp-start)/1000
       sheet[sel2].value=c.message
+    #   sheet[sel3].value=str(c.messageEx)
       cnt+=1
   time.sleep(3)
   i += 1
