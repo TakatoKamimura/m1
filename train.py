@@ -55,19 +55,20 @@ def acc(input, labels):
 def train(num_epoch):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     dataset = Data.MyDataset()
-    train_dataset,test_dataset=torch.utils.data.random_split(dataset, [int(len(dataset)*0.8), len(dataset)-int(len(dataset)*0.8)])
-    # print(len(train_dataset))
-    data_loader = DataLoader(train_dataset,batch_size=1,shuffle=True, drop_last=True)
+    # train_dataset,test_dataset=torch.utils.data.random_split(dataset, [int(len(dataset)*0.9), len(dataset)-int(len(dataset)*0.9)])
+    # data_loader = DataLoader(train_dataset,batch_size=1,shuffle=True, drop_last=True)
     model=Model.BERT_A()
     # model=Model.BERT_B()
     criterion = nn.BCEWithLogitsLoss()
     optimizer = torch.optim.AdamW(params=model.fc.parameters(), lr=1e-3)
-
+    train_dataset,test_dataset=torch.utils.data.random_split(dataset, [int(len(dataset)*0.9), len(dataset)-int(len(dataset)*0.9)])
     with tqdm(range(num_epoch)) as epoch_bar:
         for epoch in epoch_bar:
             train_loss=AverageMeter()
             train_acc = AverageMeter()
             epoch_bar.set_description("[Epoch %d]" % (epoch))
+            train_dataset,val_dataset=torch.utils.data.random_split(train_dataset, [int(len(train_dataset)*0.9), len(train_dataset)-int(len(train_dataset)*0.9)])
+            data_loader = DataLoader(train_dataset,batch_size=1,shuffle=True, drop_last=True)
             model.train()
             with tqdm(enumerate(data_loader),
                       total=len(data_loader),
