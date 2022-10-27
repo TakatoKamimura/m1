@@ -61,13 +61,13 @@ def train(num_epoch):
     # model=Model.BERT_B()
     criterion = nn.BCEWithLogitsLoss()
     optimizer = torch.optim.AdamW(params=model.fc.parameters(), lr=1e-3)
-    train_dataset,test_dataset=torch.utils.data.random_split(dataset, [int(len(dataset)*0.9), len(dataset)-int(len(dataset)*0.9)])
+    Train_dataset,test_dataset=torch.utils.data.random_split(dataset, [int(len(dataset)*0.9), len(dataset)-int(len(dataset)*0.9)])
     with tqdm(range(num_epoch)) as epoch_bar:
         for epoch in epoch_bar:
             train_loss=AverageMeter()
             train_acc = AverageMeter()
             epoch_bar.set_description("[Epoch %d]" % (epoch))
-            train_dataset,val_dataset=torch.utils.data.random_split(train_dataset, [int(len(train_dataset)*0.9), len(train_dataset)-int(len(train_dataset)*0.9)])
+            train_dataset,val_dataset=torch.utils.data.random_split(Train_dataset, [int(len(Train_dataset)*0.9), len(Train_dataset)-int(len(Train_dataset)*0.9)])
             data_loader = DataLoader(train_dataset,batch_size=1,shuffle=True, drop_last=True)
             model.train()
             with tqdm(enumerate(data_loader),
@@ -89,17 +89,28 @@ def train(num_epoch):
                     print(a)
                     train_acc.update(a, 1)
                     batch_bar.set_postfix(OrderedDict(loss=train_loss.val, acc=train_acc.val))
-            # model.eval()
-            # with torch.no_grad():
-            #     with tqdm(enumerate(data_loader),
-            #             total=len(data_loader),
-            #             leave=False) as batch_bar:
-            #         for i, (batch, label) in batch_bar:
-            #             output=model(batch)
-            #             loss=criterion(output,label)
-            #             a=acc(output,label)
-            #             print(a)
-                
+                    
+            data_loader = DataLoader(val_dataset,batch_size=1,shuffle=True, drop_last=True)
+            with tqdm(enumerate(data_loader),
+                      total=len(data_loader),
+                      leave=False) as batch_bar:
+                for i, (batch, label) in batch_bar:
+                    # batch = list(batch)#タプルをリストに
+                    #print(batch)
+                    label=label.view(-1,1)
+                    optimizer.zero_grad()#勾配の初期化
+                    output = model(batch)#順伝搬
+                    loss = criterion(output, label)#損失の計算
+                    # loss.backward()#誤差逆伝搬
+                    # optimizer.step()#重みの更新
+                    train_loss.update(loss,1)
+                    #output = sigmoid(output.detach())
+                    #print(output)
+                    a=acc(output,label)
+                    print(a)
+                    train_acc.update(a, 1)
+                    batch_bar.set_postfix(OrderedDict(loss=train_loss.val, acc=train_acc.val))
+            
 
             print(f"train_loss:avg{train_loss.avg}")
             print(f"train_acc:avg{train_acc.avg}")
