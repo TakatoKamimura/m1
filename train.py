@@ -3,7 +3,7 @@ import torch.nn as nn
 from tqdm import tqdm
 from torch.utils.data import DataLoader
 from collections import OrderedDict
-
+from matplotlib import pyplot as plt
 from models import models as Model
 from dataset import dataset as Data
 
@@ -59,6 +59,8 @@ def train(num_epoch):
     # data_loader = DataLoader(train_dataset,batch_size=1,shuffle=True, drop_last=True)
     model=Model.BERT_A()
     # model=Model.BERT_B()
+    v_loss=[]
+    v_acc=[]
     criterion = nn.BCEWithLogitsLoss()
     optimizer = torch.optim.AdamW(params=model.fc.parameters(), lr=1e-3)
     Train_dataset,test_dataset=torch.utils.data.random_split(dataset, [int(len(dataset)*0.9), len(dataset)-int(len(dataset)*0.9)])
@@ -66,6 +68,8 @@ def train(num_epoch):
         for epoch in epoch_bar:
             train_loss=AverageMeter()
             train_acc = AverageMeter()
+            val_loss=AverageMeter()
+            val_acc=AverageMeter()
             epoch_bar.set_description("[Epoch %d]" % (epoch))
             train_dataset,val_dataset=torch.utils.data.random_split(Train_dataset, [int(len(Train_dataset)*0.9), len(Train_dataset)-int(len(Train_dataset)*0.9)])
             data_loader = DataLoader(train_dataset,batch_size=1,shuffle=True, drop_last=True)
@@ -89,31 +93,35 @@ def train(num_epoch):
                     print(a)
                     train_acc.update(a, 1)
                     batch_bar.set_postfix(OrderedDict(loss=train_loss.val, acc=train_acc.val))
-                    
+            
+            #評価
             data_loader = DataLoader(val_dataset,batch_size=1,shuffle=True, drop_last=True)
+            model.eval()
+            s=0
+            a_s=0
             with tqdm(enumerate(data_loader),
                       total=len(data_loader),
                       leave=False) as batch_bar:
                 for i, (batch, label) in batch_bar:
-                    # batch = list(batch)#タプルをリストに
-                    #print(batch)
                     label=label.view(-1,1)
-                    optimizer.zero_grad()#勾配の初期化
                     output = model(batch)#順伝搬
                     loss = criterion(output, label)#損失の計算
-                    # loss.backward()#誤差逆伝搬
-                    # optimizer.step()#重みの更新
-                    train_loss.update(loss,1)
-                    #output = sigmoid(output.detach())
-                    #print(output)
+                    s+=loss.item()
+                    val_loss.update(loss,1)
                     a=acc(output,label)
                     print(a)
-                    train_acc.update(a, 1)
-                    batch_bar.set_postfix(OrderedDict(loss=train_loss.val, acc=train_acc.val))
+                    a_s+=a
+                    val_acc.update(a, 1)
+                    batch_bar.set_postfix(OrderedDict(loss=val_loss.val, acc=val_acc.val))
+            v_loss.append(s)
+            v_acc.append(a_s)
+            torch.save(model.state_dict(),str(epoch+1)+'epoch.pth')
+            plt.plot(torch.tensor(v_loss))
+
             
 
-            print(f"train_loss:avg{train_loss.avg}")
-            print(f"train_acc:avg{train_acc.avg}")
+            # print(f"train_loss:avg{train_loss.avg}")
+            # print(f"train_acc:avg{train_acc.avg}")
 
 train(1)
 
