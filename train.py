@@ -6,6 +6,7 @@ from collections import OrderedDict
 from matplotlib import pyplot as plt
 from models import models as Model
 from dataset import dataset as Data
+import os
 
 #torch.set_default_tensor_type('torch.cuda.FloatTensor')
 class AverageMeter(object):#損失の推移を確認する用のクラス
@@ -115,14 +116,16 @@ def train(num_epoch):
                     batch_bar.set_postfix(OrderedDict(loss=val_loss.val, acc=val_acc.val))
             v_loss.append(s)
             v_acc.append(a_s)
-            torch.save(model.state_dict(),str(epoch+1)+'epoch.pth')
-            plt.plot(torch.tensor(v_loss))
+            torch.save(model.state_dict(),'Weight'/str(epoch+1)+'epoch.pth')
+        print(v_loss)
+        print(v_acc)
+
 
             
 
             # print(f"train_loss:avg{train_loss.avg}")
             # print(f"train_acc:avg{train_acc.avg}")
 
-train(1)
+train(10)
 
 
