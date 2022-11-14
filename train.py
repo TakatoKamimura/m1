@@ -7,6 +7,7 @@ from matplotlib import pyplot as plt
 from models import models as Model
 from dataset import dataset as Data
 import os
+import numpy as np
 
 #torch.set_default_tensor_type('torch.cuda.FloatTensor')
 class AverageMeter(object):#損失の推移を確認する用のクラス
@@ -116,16 +117,23 @@ def train(num_epoch):
                     batch_bar.set_postfix(OrderedDict(loss=val_loss.val, acc=val_acc.val))
             v_loss.append(s)
             v_acc.append(a_s)
-            torch.save(model.state_dict(),'Weight'/str(epoch+1)+'epoch.pth')
+            torch.save(model.state_dict(),'Weight/'+str(epoch+1)+'epoch.pth')
         print(v_loss)
         print(v_acc)
-
+        x = np.array(range(0, 5))
+        y = np.array(v_loss)
+        plt.title("Plotting 1-D array")
+        plt.xlabel("X axis")
+        plt.ylabel("Y axis")
+        plt.plot(x, y, color = "red", marker = "o", label = "Array elements")
+        plt.legend()
+        plt.show()
 
             
 
             # print(f"train_loss:avg{train_loss.avg}")
             # print(f"train_acc:avg{train_acc.avg}")
 
-train(10)
+train(5)
 
 
