@@ -16,7 +16,7 @@ class MyDataset(torch.utils.data.Dataset):
     def __getitem__(self, idx):
         comment = self.comment[idx]
         comment = str(comment)  
-        # if "w" in comment or "ｗ" in comment or "草" in comment:
+        # if "w" in comment or "ｗ" in comment or "草" or "くさ" in comment:
         #     label = torch.ones([1])
         # else:
         #     label = torch.zeros([1])

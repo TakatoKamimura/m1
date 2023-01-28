@@ -39,23 +39,40 @@ def acc(input, labels):
     sigmoid = nn.Sigmoid()
     output=sigmoid(input)
     output = list(output)
-    print(output[0])
+    # print(output[0])
     preds = []
     for out in output:
         if out >= 0.5:
             preds.append(1)
         else:
             preds.append(0)
-    print('ラベル：',end='')
-    print(labels)
-    print('予測：',end='')
-    print(preds)
+    # print('ラベル：',end='')
+    # print(labels)
+    # print('予測：',end='')
+    # print(preds)
+    preds = torch.Tensor(preds)
+    acc = preds.eq(labels).sum().item()
+    return acc / bs
+
+def acc2(input, labels):
+    bs = input.size(0)
+    # print(bs)
+    sigmoid = nn.Sigmoid()
+    output=sigmoid(input)
+    output = list(output)
+    # print(output[0])
+    preds = []
+    for out in output:
+        if out >= 0.5:
+            preds.append(1)
+        else:
+            preds.append(0)
     preds = torch.Tensor(preds)
     acc = preds.eq(labels).sum().item()
     return acc / bs
 
 def train(num_epoch):
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    # device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     dataset = Data.MyDataset()
     # train_dataset,test_dataset=torch.utils.data.random_split(dataset, [int(len(dataset)*0.9), len(dataset)-int(len(dataset)*0.9)])
     # data_loader = DataLoader(train_dataset,batch_size=1,shuffle=True, drop_last=True)
@@ -66,6 +83,8 @@ def train(num_epoch):
     criterion = nn.BCEWithLogitsLoss()
     optimizer = torch.optim.AdamW(params=model.fc.parameters(), lr=1e-3)
     Train_dataset,test_dataset=torch.utils.data.random_split(dataset, [int(len(dataset)*0.9), len(dataset)-int(len(dataset)*0.9)])
+    
+    print(test_dataset)
     with tqdm(range(num_epoch)) as epoch_bar:
         for epoch in epoch_bar:
             train_loss=AverageMeter()
@@ -74,6 +93,7 @@ def train(num_epoch):
             val_acc=AverageMeter()
             epoch_bar.set_description("[Epoch %d]" % (epoch))
             train_dataset,val_dataset=torch.utils.data.random_split(Train_dataset, [int(len(Train_dataset)*0.9), len(Train_dataset)-int(len(Train_dataset)*0.9)])
+            
             data_loader = DataLoader(train_dataset,batch_size=1,shuffle=True, drop_last=True)
             model.train()
             with tqdm(enumerate(data_loader),
@@ -92,7 +112,7 @@ def train(num_epoch):
                     #output = sigmoid(output.detach())
                     #print(output)
                     a=acc(output,label)
-                    print(a)
+                    # print(a)
                     train_acc.update(a, 1)
                     batch_bar.set_postfix(OrderedDict(loss=train_loss.val, acc=train_acc.val))
             
@@ -111,7 +131,7 @@ def train(num_epoch):
                     s+=loss.item()
                     val_loss.update(loss,1)
                     a=acc(output,label)
-                    print(a)
+                    # print(a)
                     a_s+=a
                     val_acc.update(a, 1)
                     batch_bar.set_postfix(OrderedDict(loss=val_loss.val, acc=val_acc.val))
@@ -120,20 +140,45 @@ def train(num_epoch):
             torch.save(model.state_dict(),'Weight/'+str(epoch+1)+'epoch.pth')
         print(v_loss)
         print(v_acc)
-        x = np.array(range(0, 5))
-        y = np.array(v_loss)
-        plt.title("Plotting 1-D array")
-        plt.xlabel("X axis")
-        plt.ylabel("Y axis")
-        plt.plot(x, y, color = "red", marker = "o", label = "Array elements")
-        plt.legend()
-        plt.show()
+        # x = np.array()
+        # y = np.array(v_loss)
+        # plt.title("Plotting 1-D array")
+        # plt.xlabel("X axis")
+        # plt.ylabel("Y axis")
+        # plt.plot(x, y, color = "red", marker = "o", label = "Array elements")
+        # plt.legend()
+        # plt.show()
+    return test_dataset
 
-            
+
+def test(test_dataset):
+    accuracy=0
+    dataset = Data.MyDataset()
+    model=Model.BERT_A()
+    # model=Model.BERT_B()
+    Train_dataset,test_dataset=torch.utils.data.random_split(dataset, [int(len(dataset)*0.9), len(dataset)-int(len(dataset)*0.9)])
+    with tqdm(range(1)) as epoch_bar:
+        for epoch in epoch_bar:
+            epoch_bar.set_description("[Epoch %d]" % (epoch))
+            data_loader = DataLoader(test_dataset,batch_size=1,shuffle=True, drop_last=True)
+            with tqdm(enumerate(data_loader),
+                      total=len(data_loader),
+                      leave=False) as batch_bar:
+                for i, (batch, label) in batch_bar:
+                    # batch = list(batch)#タプルをリストに
+                    #print(batch)
+                    label=label.view(-1,1)
+                    output = model(batch)#順伝搬
+                    a=acc2(output,label)
+                    accuracy+=a
+    return accuracy/len(test_dataset)
 
             # print(f"train_loss:avg{train_loss.avg}")
             # print(f"train_acc:avg{train_acc.avg}")
 
-train(5)
-
+test_dataset=train(1)
+print(len(test_dataset))
+accuracy=test(1)
+print('精度')
+print(accuracy)
 
