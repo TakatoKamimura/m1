@@ -1,6 +1,9 @@
 import pytchat
 import time
 import openpyxl as op
+import re
+from googletrans import Translator
+
 wb = op.Workbook()
 sheet=wb.active
 sheet.title="チャットリプレイ"
@@ -15,17 +18,19 @@ while stream.is_alive():
   data = stream.get()
   items = data.items
   for c in items:
-      print(f"{c.timestamp},{c.message},{c.messageEx}")
-      sel1="A"+str(cnt)
-      sel2="B"+str(cnt)
-    #   sel3="C"+str(cnt)
-      if cnt1==0:
-          start=c.timestamp
-          cnt1+=1
-      sheet[sel1].value=(c.timestamp-start)/1000
-      sheet[sel2].value=c.message
-    #   sheet[sel3].value=str(c.messageEx)
-      cnt+=1
+    if ':' in c.message:
+      continue
+    # print(f"{c.timestamp},{c.message},{c.messageEx}")
+    sel1="A"+str(cnt)
+    sel2="B"+str(cnt)
+  #   sel3="C"+str(cnt)
+    if cnt1==0:
+        start=c.timestamp
+        cnt1+=1
+    sheet[sel1].value=(c.timestamp-start)/1000
+    sheet[sel2].value=c.message
+  #   sheet[sel3].value=str(c.messageEx)
+    cnt+=1
   time.sleep(3)
   i += 1
   #if i == 10:
