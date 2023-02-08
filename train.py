@@ -84,7 +84,6 @@ def train(num_epoch):
     optimizer = torch.optim.AdamW(params=model.fc.parameters(), lr=1e-3)
     Train_dataset,test_dataset=torch.utils.data.random_split(dataset, [int(len(dataset)*0.9), len(dataset)-int(len(dataset)*0.9)])
     
-    print(test_dataset)
     with tqdm(range(num_epoch)) as epoch_bar:
         for epoch in epoch_bar:
             train_loss=AverageMeter()
@@ -117,6 +116,7 @@ def train(num_epoch):
                     batch_bar.set_postfix(OrderedDict(loss=train_loss.val, acc=train_acc.val))
             
             #評価
+            l=len(val_dataset)
             data_loader = DataLoader(val_dataset,batch_size=1,shuffle=True, drop_last=True)
             model.eval()
             s=0
@@ -136,27 +136,42 @@ def train(num_epoch):
                     val_acc.update(a, 1)
                     batch_bar.set_postfix(OrderedDict(loss=val_loss.val, acc=val_acc.val))
             v_loss.append(s)
-            v_acc.append(a_s)
+            v_acc.append(a_s/l)
             torch.save(model.state_dict(),'Weight/'+str(epoch+1)+'epoch.pth')
+
         print(v_loss)
         print(v_acc)
-        # x = np.array()
-        # y = np.array(v_loss)
-        # plt.title("Plotting 1-D array")
-        # plt.xlabel("X axis")
-        # plt.ylabel("Y axis")
-        # plt.plot(x, y, color = "red", marker = "o", label = "Array elements")
-        # plt.legend()
-        # plt.show()
-    return test_dataset
+        Min=v_loss.index(min(v_loss))+1
+
+        g=[]
+        for i in range(num_epoch):
+            g.append(i+1)
+        x = np.array(g)
+        y = np.array(v_loss)
+        y1=np.array(v_acc)
+        plt.title("loss")
+        plt.xlabel("X axis")
+        plt.ylabel("Y axis")
+        plt.plot(x, y, color = "red", marker = "o", label = "Array elements")
+        plt.legend()
+        plt.show()
+
+        plt.title("acc")
+        plt.xlabel("X axis")
+        plt.ylabel("Y axis")
+        plt.plot(x, y1, color = "blue", marker = "o", label = "Array elements")
+        plt.legend()
+        plt.show()
+    return test_dataset,Min
 
 
-def test(test_dataset):
+def test(test_dataset,Min):
     accuracy=0
-    dataset = Data.MyDataset()
-    model=Model.BERT_A()
-    # model=Model.BERT_B()
-    Train_dataset,test_dataset=torch.utils.data.random_split(dataset, [int(len(dataset)*0.9), len(dataset)-int(len(dataset)*0.9)])
+    # dataset = Data.MyDataset()
+    model = Model.BERT_A()
+    model.load_state_dict(torch.load('Weight/'+str(Min)+'epoch.pth'))
+    model.eval()
+    # Train_dataset,test_dataset=torch.utils.data.random_split(dataset, [int(len(dataset)*0.9), len(dataset)-int(len(dataset)*0.9)])
     with tqdm(range(1)) as epoch_bar:
         for epoch in epoch_bar:
             epoch_bar.set_description("[Epoch %d]" % (epoch))
@@ -176,9 +191,11 @@ def test(test_dataset):
             # print(f"train_loss:avg{train_loss.avg}")
             # print(f"train_acc:avg{train_acc.avg}")
 
-test_dataset=train(1)
-print(len(test_dataset))
-accuracy=test(1)
+
+
+test_dataset,Min=train(50)
+
+accuracy=test(test_dataset,Min)
 print('精度')
 print(accuracy)
 
