@@ -60,7 +60,6 @@ def acc2(input, labels):
     sigmoid = nn.Sigmoid()
     output=sigmoid(input)
     output = list(output)
-    # print(output[0])
     preds = []
     for out in output:
         if out >= 0.5:
@@ -76,7 +75,7 @@ def train(num_epoch):
     dataset = Data.MyDataset()
     # train_dataset,test_dataset=torch.utils.data.random_split(dataset, [int(len(dataset)*0.9), len(dataset)-int(len(dataset)*0.9)])
     # data_loader = DataLoader(train_dataset,batch_size=1,shuffle=True, drop_last=True)
-    model=Model.BERT_A()
+    model=Model.BERT_B()
     # model=Model.BERT_B()
     v_loss=[]
     v_acc=[]
@@ -168,7 +167,7 @@ def train(num_epoch):
 def test(test_dataset,Min):
     accuracy=0
     # dataset = Data.MyDataset()
-    model = Model.BERT_A()
+    model = Model.BERT_B()
     model.load_state_dict(torch.load('Weight/'+str(Min)+'epoch.pth'))
     model.eval()
     # Train_dataset,test_dataset=torch.utils.data.random_split(dataset, [int(len(dataset)*0.9), len(dataset)-int(len(dataset)*0.9)])

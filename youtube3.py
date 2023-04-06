@@ -20,7 +20,7 @@ while stream.is_alive():
   for c in items:
     if ':' in c.message:
       continue
-    # print(f"{c.timestamp},{c.message},{c.messageEx}")
+    print(f"{c.timestamp},{c.message}")
     sel1="A"+str(cnt)
     sel2="B"+str(cnt)
   #   sel3="C"+str(cnt)
