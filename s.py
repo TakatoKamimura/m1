@@ -1,5 +1,4 @@
 import re
-from googletrans import Translator
 # s = 'this is :sample string: for _extracting substring_.'
 
 # # アスタリスクで囲まれている部分を抽出
@@ -7,17 +6,10 @@ from googletrans import Translator
 # #p = r'\*[^*]*\*'  # アスタリスクに囲まれているアスタリスク以外の文字
 # r = re.findall(p, s)  # パターンに当てはまるものを全て抽出
 # print(r)
-s=':kuzuha::nice::nice:'
-s=list(map(str,s.split(':')))
-a=[]
-for i in range(len(s)):
-    if len(s[i])>0:
-        a.append(s[i])
-traslator=Translator()
-for i in range(len(a)):
-    t=traslator.translate(a[i],src='en',dest="ja")
-    print(t.text)
-
+s=':face_with_tears_of_joy:'
+result = re.sub(':.*?:', '', s)  # : で囲まれた部分を除去
+print(result)
+print(len(result))
 # p=r':(.*):'
 # r=re.findall(p,s)
 # print(r)

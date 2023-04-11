@@ -18,9 +18,15 @@ while stream.is_alive():
   data = stream.get()
   items = data.items
   for c in items:
-    if ':' in c.message:
+    pattern = re.compile(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+')
+    if re.search(pattern,c.message):
       continue
-    print(f"{c.timestamp},{c.message}")
+    result = re.sub(':.*?:', '', c.message)
+    if len(result)<1:
+      continue
+    # print(f"{c.timestamp},{c.message}")
+    print(f"{c.timestamp},{result}")
+
     sel1="A"+str(cnt)
     sel2="B"+str(cnt)
   #   sel3="C"+str(cnt)
