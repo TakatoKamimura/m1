@@ -11,7 +11,7 @@ import numpy as np
 import pandas as pd
 
 
-def train(num_epoch):
+def pred(num_epoch):
     # device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     dataset = Data.MyDataset()
     # train_dataset,test_dataset=torch.utils.data.random_split(dataset, [int(len(dataset)*0.9), len(dataset)-int(len(dataset)*0.9)])
@@ -52,4 +52,4 @@ def train(num_epoch):
 
                 
 
-train(1)
+pred(1)
