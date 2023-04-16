@@ -1,15 +1,47 @@
-import re
-# s = 'this is :sample string: for _extracting substring_.'
+import pandas as pd
+import matplotlib.pyplot as plt
+from editor import editor as ed
+# データの読み込み
+df = pd.read_csv('new_hinano4.csv')
 
-# # アスタリスクで囲まれている部分を抽出
-# p = r':(.*):'  # アスタリスクに囲まれている任意の文字
-# #p = r'\*[^*]*\*'  # アスタリスクに囲まれているアスタリスク以外の文字
-# r = re.findall(p, s)  # パターンに当てはまるものを全て抽出
-# print(r)
-s=':face_with_tears_of_joy:'
-result = re.sub(':.*?:', '', s)  # : で囲まれた部分を除去
-print(result)
-print(len(result))
-# p=r':(.*):'
-# r=re.findall(p,s)
-# print(r)
+# timestamp列をdatetime型に変換してインデックスに設定
+df['時間'] = pd.to_datetime(df['時間'], unit='s')
+df.set_index('時間', inplace=True)
+
+counts = df['予測値'].resample('10s').sum()
+
+center_idx = counts.argmax()
+start_idx = max(0, center_idx - 10)
+end_idx = min(len(counts), center_idx + 10)
+counts = counts.iloc[start_idx:end_idx]
+
+# プロット
+fig, ax = plt.subplots(figsize=(12, 6))
+ax.plot(counts.index, counts.values)
+ax.set_xlabel('time')
+ax.set_ylabel('count')
+plt.show()
+
+
+
+# CSVファイルを読み込み
+df = pd.read_csv('new_hinano4.csv')
+
+# 時間をdatetime型に変換
+df['時間'] = pd.to_datetime(df['時間'], unit='s')
+
+# 時間を5秒ごとの区間に分割
+df['時間'] = pd.cut(df['時間'], pd.date_range(start=df['時間'].iloc[0], end=df['時間'].iloc[-1] + pd.Timedelta(seconds=10), freq='10s'))
+
+# 区間ごとに1と予測されたデータの数を集計
+interval_counts = df[df['予測値'] == 1].groupby('時間').size()
+interval_counts_sorted = interval_counts.sort_values(ascending=False)
+# 結果を出力
+print(interval_counts_sorted)
+
+editor=ed(5570,5630)
+a=[]
+a.append(ed.cut(5570,5630))
+b=ed.concatenate(a)
+ed.save(b)
+

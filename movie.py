@@ -23,7 +23,7 @@ def pred(num_epoch):
     # v_acc=[]
     sigmoid = nn.Sigmoid()
     pred=[]
-    df=pd.read_csv('C:\\Users\\admin\\Desktop\\m1\\ひなーの3.csv',encoding='utf-8')
+    df=pd.read_csv('C:\\Users\\admin\\Desktop\\m1\\hinano4.csv',encoding='utf-8')
     with tqdm(range(num_epoch)) as epoch_bar:
         for epoch in epoch_bar:
             epoch_bar.set_description("[Epoch %d]" % (epoch))
@@ -48,7 +48,7 @@ def pred(num_epoch):
     print(len(pred))
     print(pred)
     print(df)
-    df.to_csv('new_hinano3.csv',encoding='utf-8',index=False)
+    df.to_csv('new_hinano4.csv',encoding='utf-8',index=False)
 
                 
 
