@@ -48,7 +48,7 @@ def pred(num_epoch):
     print(len(pred))
     print(pred)
     print(df)
-    df.to_csv('new_hinano4.csv',encoding='utf-8',index=False)
+    df.to_csv('new_hinano5.csv',encoding='utf-8',index=False)
 
                 
 
