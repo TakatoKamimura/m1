@@ -28,7 +28,7 @@ def pred(num_epoch):
         for epoch in epoch_bar:
             epoch_bar.set_description("[Epoch %d]" % (epoch))
             data_loader = DataLoader(dataset,batch_size=1,shuffle=False, drop_last=True)
-            model.train()
+            model.eval()
             with tqdm(enumerate(data_loader),
                       total=len(data_loader),
                       leave=False) as batch_bar:
