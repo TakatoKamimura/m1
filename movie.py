@@ -1,3 +1,4 @@
+# 学習済みのモデルを使って、出力を新たなexcelファイルに保存するためのプログラム
 import torch
 import torch.nn as nn
 from tqdm import tqdm
