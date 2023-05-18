@@ -19,8 +19,6 @@ class BERT_A(nn.Module):
         # tokens_tensor = input.reshape(1, -1)
         output = self.bert(input).last_hidden_state[:, 0, :]
         output = self.fc(output)#順伝搬の出力
-        # sigmoid = nn.Sigmoid()
-        # output=sigmoid(output)#シグモイドに通す
         return output
 
 class BERT_B(nn.Module): 
@@ -39,7 +37,5 @@ class BERT_B(nn.Module):
         # tokens_tensor = input.reshape(1, -1)
         output = self.bert(input).last_hidden_state[:, 0, :]
         output = self.fc(output)#順伝搬の出力
-        # sigmoid = nn.Sigmoid()
-        # output=sigmoid(output)#シグモイドに通す
         return output
     
