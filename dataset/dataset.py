@@ -5,7 +5,7 @@ from transformers import BertJapaneseTokenizer
 
 
 class MyDataset(torch.utils.data.Dataset):
-    def __init__(self, df=pd.read_csv("ひなーの3.csv",usecols=['コメント','ラベル'])):
+    def __init__(self, df=pd.read_csv("textchat_from_youtube\\ひなーの3.csv",usecols=['コメント','ラベル'])):
         self.tokenizer = BertJapaneseTokenizer.from_pretrained('cl-tohoku/bert-base-japanese-whole-word-masking')
         self.comment = df["コメント"]
         self.label=df["ラベル"]
