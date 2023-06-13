@@ -6,12 +6,12 @@ class editor():
         self.end=end
     
     def cut(start,end):
-        return VideoFileClip("movie\\hinano.mp4").subclip(start,end)
+        return VideoFileClip("movie\\kuzuha_vcc.mp4").subclip(start,end)
 
     def concatenate(clip:list):
         return concatenate_videoclips(clip)
     
     def save(a):
-        a.write_videofile('movie\\output.mp4')
+        a.write_videofile('movie\\kuzuha_chanel_vcc_output.mp4')
 
 

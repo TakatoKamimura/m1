@@ -18,13 +18,13 @@ def pred(num_epoch):
     # train_dataset,test_dataset=torch.utils.data.random_split(dataset, [int(len(dataset)*0.9), len(dataset)-int(len(dataset)*0.9)])
     # data_loader = DataLoader(train_dataset,batch_size=1,shuffle=True, drop_last=True)
     model=Model.BERT_A()
-    model.load_state_dict(torch.load('Weight/90epoch.pth'))
+    model.load_state_dict(torch.load('Weight/kuzuha_kirinuki.pth'))
     # model=Model.BERT_B()
     # v_loss=[]
     # v_acc=[]
     sigmoid = nn.Sigmoid()
     pred=[]
-    df=pd.read_csv('C:\\Users\\admin\\Desktop\\m1\\hinano4.csv',encoding='utf-8')
+    df=pd.read_csv('C:\\Users\\admin\\Desktop\\m1\\textchat_from_youtube\\lYJE1CBf_2o(kuzuha_vcc).csv',encoding='utf-8')
     with tqdm(range(num_epoch)) as epoch_bar:
         for epoch in epoch_bar:
             epoch_bar.set_description("[Epoch %d]" % (epoch))
@@ -42,14 +42,16 @@ def pred(num_epoch):
                     for out in output:
                         if out >= 0.5:
                             pred.append(1)
+                            print(1)
                         else:
                             pred.append(0)
+                            print(0)
     pred=pd.DataFrame(pred)
     df['予測値']=pred
     print(len(pred))
     print(pred)
     print(df)
-    df.to_csv('new_hinano5.csv',encoding='utf-8',index=False)
+    df.to_csv('textchat_from_youtube\\new_lYJE1CBf_2o(kuzuha_vcc_葛葉切り抜き集).csv',encoding='utf-8',index=False)
 
                 
 

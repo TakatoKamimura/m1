@@ -75,7 +75,7 @@ def train(num_epoch):
     dataset = Data.MyDataset()
     # train_dataset,test_dataset=torch.utils.data.random_split(dataset, [int(len(dataset)*0.9), len(dataset)-int(len(dataset)*0.9)])
     # data_loader = DataLoader(train_dataset,batch_size=1,shuffle=True, drop_last=True)
-    model=Model.BERT_B()
+    model=Model.BERT_A()
     # model=Model.BERT_B()
     v_loss=[]
     v_acc=[]
@@ -136,7 +136,7 @@ def train(num_epoch):
                     batch_bar.set_postfix(OrderedDict(loss=val_loss.val, acc=val_acc.val))
             v_loss.append(s)
             v_acc.append(a_s/l)
-            torch.save(model.state_dict(),'Weight/'+str(epoch+1)+'epoch.pth')
+            torch.save(model.state_dict(),'Weight/'+str(epoch+1)+'kuzuha.pth')
 
         print(v_loss)
         print(v_acc)
@@ -167,8 +167,8 @@ def train(num_epoch):
 def test(test_dataset,Min):
     accuracy=0
     # dataset = Data.MyDataset()
-    model = Model.BERT_B()
-    model.load_state_dict(torch.load('Weight/'+str(Min)+'epoch.pth'))
+    model = Model.BERT_A()
+    model.load_state_dict(torch.load('Weight/'+str(Min)+'kuzuha.pth'))
     model.eval()
     # Train_dataset,test_dataset=torch.utils.data.random_split(dataset, [int(len(dataset)*0.9), len(dataset)-int(len(dataset)*0.9)])
     with tqdm(range(1)) as epoch_bar:
@@ -192,8 +192,8 @@ def test(test_dataset,Min):
 
 
 
-test_dataset,Min=train(50)
-
+test_dataset,Min=train(20)
+print(Min)
 accuracy=test(test_dataset,Min)
 print('精度')
 print(accuracy)

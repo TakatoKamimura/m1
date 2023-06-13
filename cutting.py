@@ -1,31 +1,47 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 from editor import editor as ed
-# データの読み込み
-df = pd.read_csv('new_hinano4.csv')
+# # データの読み込み
+# df = pd.read_csv('new_lYJE1CBf_2o(kuzuha_vcc_葛葉ch).csv')
 
-# timestamp列をdatetime型に変換してインデックスに設定
-df['時間'] = pd.to_datetime(df['時間'], unit='s')
-df.set_index('時間', inplace=True)
+# # timestamp列をdatetime型に変換してインデックスに設定
+# df['時間'] = pd.to_datetime(df['時間'], unit='s')
+# df.set_index('時間', inplace=True)
 
-counts = df['予測値'].resample('10s').sum()
+# counts = df['予測値'].resample('10s').sum()
 
-center_idx = counts.argmax()
-start_idx = max(0, center_idx - 10)
-end_idx = min(len(counts), center_idx + 10)
-counts = counts.iloc[start_idx:end_idx]
+# center_idx = counts.argmax()
+# start_idx = max(0, center_idx - 10)
+# end_idx = min(len(counts), center_idx + 10)
+# counts = counts.iloc[start_idx:end_idx]
 
-# プロット
-fig, ax = plt.subplots(figsize=(12, 6))
-ax.plot(counts.index, counts.values)
-ax.set_xlabel('time')
-ax.set_ylabel('count')
-plt.show()
+# # プロット
+# fig, ax = plt.subplots(figsize=(12, 6))
+# ax.plot(counts.index, counts.values)
+# ax.set_xlabel('time')
+# ax.set_ylabel('count')
+# plt.show()
+
+def merge_intervals(intervals):
+    intervals.sort()  # 区間リストを昇順にソート
+    merged_intervals = [intervals[0]]  # 最初の区間を追加
+
+    for current_interval in intervals[1:]:
+        last_interval = merged_intervals[-1]  # 最後の統合済み区間を取得
+
+        if current_interval[0] <= last_interval[1]:
+            # 現在の区間と最後の統合済み区間が重複している場合、統合する
+            last_interval[1] = max(last_interval[1], current_interval[1])
+        else:
+            # 重複していない場合、現在の区間を追加
+            merged_intervals.append(current_interval)
+
+    return merged_intervals
 
 
 
 # CSVファイルを読み込み
-df = pd.read_csv('new_hinano4.csv')
+df = pd.read_csv('textchat_from_youtube\\new_lYJE1CBf_2o(kuzuha_vcc_葛葉ch).csv')
 
 # 時間をdatetime型に変換
 df['時間'] = pd.to_datetime(df['時間'], unit='s')
@@ -38,10 +54,28 @@ interval_counts = df[df['予測値'] == 1].groupby('時間').size()
 interval_counts_sorted = interval_counts.sort_values(ascending=False)
 # 結果を出力
 print(interval_counts_sorted)
-
-editor=ed(5570,5630)
+section=[]
+a=0
+for interval_info, count in interval_counts_sorted.items():
+    if a>9:
+        break
+    start = interval_info.left.time()
+    end = interval_info.right.time()
+    start_seconds = start.hour * 3600 + start.minute * 60 + start.second-20
+    end_seconds = end.hour * 3600 + end.minute * 60 + end.second
+    section.append([start_seconds,end_seconds])
+    a+=1
+print(section)
+section.sort()
+print(section)
+section=merge_intervals(section)
+print(section)
 a=[]
-a.append(ed.cut(5570,5630))
+for i,v in enumerate(section):
+    editor=ed(v[0],v[1])
+    a.append(ed.cut(v[0],v[1]))
+# editor=ed(60*165,60*165+30)
+# a.append(ed.cut(60*165,60*165+30))
 b=ed.concatenate(a)
 ed.save(b)
 
