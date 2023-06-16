@@ -5,8 +5,13 @@ from transformers import BertJapaneseTokenizer
 
 
 class MyDataset(torch.utils.data.Dataset):
-    def __init__(self, df=pd.read_csv("textchat_from_youtube\\JmOGWt-XjzI(葛葉切り抜き集用).csv",usecols=['コメント','ラベル'])):
+    def __init__(self, df=pd.read_csv("textchat_from_youtube\\lYJE1CBf_2o(kuzuha_vcc).csv",usecols=['コメント','時間'])):
         self.comment = df["コメント"]
+        self.time=df["時間"]
+        # self.comment=self.comment[23:].reset_index(drop=True)
+        # self.comment=self.comment[:18489-23].reset_index(drop=True)
+        # self.time=self.time[23:].reset_index(drop=True)
+        # self.time=self.time[:18489-23].reset_index(drop=True)
 
     def __len__(self):
         return len(self.comment)
@@ -14,11 +19,4 @@ class MyDataset(torch.utils.data.Dataset):
     def __getitem__(self, idx):
         comment = self.comment[idx]
         comment = str(comment)  
-        # if "w" in comment or "ｗ" in comment or "草" or "くさ" in comment:
-        #     label = torch.ones([1])
-        # else:
-        #     label = torch.zeros([1])
-        # bert_tokens = self.tokenizer.encode(comment)
-        # bert_tokens=torch.tensor(bert_tokens)
-
         return comment

@@ -1,7 +1,5 @@
-from transformers import BertJapaneseTokenizer,BertForSequenceClassification, AdamW, BertConfig,BertModel
-from transformers import BertJapaneseTokenizer,BertModel
+from transformers import BertJapaneseTokenizer, BertModel
 import torch
-import torch.nn as nn
 
 
 class SentenceBertJapanese:
@@ -10,10 +8,10 @@ class SentenceBertJapanese:
         self.model = BertModel.from_pretrained(model_name_or_path)
         self.model.eval()
 
-        # if device is None:
-        #     device = "cuda" if torch.cuda.is_available() else "cpu"
-        # self.device = torch.device(device)
-        # self.model.to(device)
+        if device is None:
+            device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.device = torch.device(device)
+        self.model.to(device)
 
     def _mean_pooling(self, model_output, attention_mask):
         token_embeddings = model_output[0] #First element of model_output contains all token embeddings
@@ -28,12 +26,11 @@ class SentenceBertJapanese:
             batch = sentences[batch_idx:batch_idx + batch_size]
 
             encoded_input = self.tokenizer.batch_encode_plus(batch, padding="longest", 
-                                           truncation=True, return_tensors="pt")
+                                           truncation=True, return_tensors="pt").to(self.device)
             model_output = self.model(**encoded_input)
-            sentence_embeddings = self._mean_pooling(model_output, encoded_input["attention_mask"])
+            sentence_embeddings = self._mean_pooling(model_output, encoded_input["attention_mask"]).to('cpu')
 
             all_embeddings.extend(sentence_embeddings)
 
         # return torch.stack(all_embeddings).numpy()
         return torch.stack(all_embeddings)
-    
