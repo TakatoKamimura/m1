@@ -79,6 +79,11 @@ def train(num_epoch):
     v_acc=[]
     criterion = nn.BCEWithLogitsLoss()
     optimizer = torch.optim.AdamW(params=model.fc.parameters(), lr=1e-3)
+    bert_top_params = []
+    for name, param in model.named_parameters():
+        if "bert.pooler" in name:
+            bert_top_params.append(param)
+    optimizer.add_param_group({'params':bert_top_params,'lr':1e-3})
     Train_dataset,test_dataset=torch.utils.data.random_split(dataset, [int(len(dataset)*0.9), len(dataset)-int(len(dataset)*0.9)])
     
     with tqdm(range(num_epoch)) as epoch_bar:
