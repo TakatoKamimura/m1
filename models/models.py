@@ -11,12 +11,15 @@ class BERT_A(nn.Module):
         # self.bert=BertModel.from_pretrained('cl-tohoku/bert-base-japanese-v2')
         # self.bert=BertForSequenceClassification.from_pretrained('cl-tohoku/bert-base-japanese-whole-word-masking',num_labels = 2)
         self.fc=nn.Linear(768,1)
+
         
     def forward(self, input) -> torch.Tensor:
         # bert_tokens = self.tokenizer(input, return_tensors="pt", padding=True)
         # input.input_ids
         # ids = input["input_ids"]
         # tokens_tensor = input.reshape(1, -1)
+        # output = self.bert(input).last_hidden_state[:, 0, :]
+        
         output = self.bert(input).last_hidden_state[:, 0, :]
         output = self.fc(output)#順伝搬の出力
         return output

@@ -135,6 +135,8 @@ def train(num_epoch):
                       leave=False) as batch_bar:
                 for i, (batch, label) in batch_bar:
                     label=label.view(-1,1)
+                    label=label.to(device)
+                    batch=batch.to(device)
                     output = model(batch)#順伝搬
                     loss = criterion(output, label)#損失の計算
                     s+=loss.item()
@@ -175,10 +177,12 @@ def train(num_epoch):
 
 def test(test_dataset,Min):
     accuracy=0
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     # dataset = Data.MyDataset()
     model = Model.BERT_A()
-    model.load_state_dict(torch.load('Weight/'+str(Min)+'kuzuha.pth'))
+    model.load_state_dict(torch.load('Weight/'+str(Min)+'kuzuha_GPU.pth'))
     model.eval()
+    model.to(device)
     # Train_dataset,test_dataset=torch.utils.data.random_split(dataset, [int(len(dataset)*0.9), len(dataset)-int(len(dataset)*0.9)])
     with tqdm(range(1)) as epoch_bar:
         for epoch in epoch_bar:
@@ -191,6 +195,8 @@ def test(test_dataset,Min):
                     # batch = list(batch)#タプルをリストに
                     #print(batch)
                     label=label.view(-1,1)
+                    label=label.to(device)
+                    batch=batch.to(device)
                     output = model(batch)#順伝搬
                     a=acc2(output,label)
                     accuracy+=a
@@ -201,7 +207,7 @@ def test(test_dataset,Min):
 
 
 
-test_dataset,Min=train(20)
+test_dataset,Min=train(1)
 print(Min)
 accuracy=test(test_dataset,Min)
 print('精度')
