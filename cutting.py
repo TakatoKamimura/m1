@@ -46,7 +46,7 @@ df = pd.read_csv('textchat_from_youtube\\new_lYJE1CBf_2o(kuzuha_vcc_葛葉ch).cs
 # 時間をdatetime型に変換
 df['時間'] = pd.to_datetime(df['時間'], unit='s')
 
-# 時間を5秒ごとの区間に分割
+# 時間を10秒ごとの区間に分割
 df['時間'] = pd.cut(df['時間'], pd.date_range(start=df['時間'].iloc[0], end=df['時間'].iloc[-1] + pd.Timedelta(seconds=10), freq='10s'))
 
 # 区間ごとに1と予測されたデータの数を集計
@@ -70,6 +70,7 @@ section.sort()
 print(section)
 section=merge_intervals(section)
 print(section)
+exit()
 a=[]
 for i,v in enumerate(section):
     editor=ed(v[0],v[1])
