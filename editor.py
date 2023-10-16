@@ -12,6 +12,6 @@ class editor():
         return concatenate_videoclips(clip)
     
     def save(a):
-        a.write_videofile('movie\\kuzuha_chanel_vcc_output.mp4')
+        a.write_videofile('movie\\new_kuzuha_kirinukichanel_101_vcc_output.mp4')
 
 

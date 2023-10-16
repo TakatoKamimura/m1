@@ -41,7 +41,7 @@ def merge_intervals(intervals):
 
 
 # CSVファイルを読み込み
-df = pd.read_csv('textchat_from_youtube\\new_lYJE1CBf_2o(kuzuha_vcc_葛葉ch).csv')
+df = pd.read_csv('textchat_from_youtube\\new_lYJE1CBf_2o(kuzuha_vcc_葛葉切り抜きch).csv')
 
 # 時間をdatetime型に変換
 df['時間'] = pd.to_datetime(df['時間'], unit='s')
@@ -57,19 +57,28 @@ print(interval_counts_sorted)
 section=[]
 a=0
 for interval_info, count in interval_counts_sorted.items():
-    if a>9:
+    if a>142:
         break
     start = interval_info.left.time()
     end = interval_info.right.time()
     start_seconds = start.hour * 3600 + start.minute * 60 + start.second-20
     end_seconds = end.hour * 3600 + end.minute * 60 + end.second
     section.append([start_seconds,end_seconds])
+    section=merge_intervals(section)
     a+=1
-print(section)
+
+# print(section)
 section.sort()
+# print(section)
+total_length = sum(end - start for start, end in section)
+
 print(section)
-section=merge_intervals(section)
-print(section)
+list_as_string = ",".join([str(sublist) for sublist in section])
+
+# テキストファイルに書き込み
+with open("output.txt", "w") as file:
+    file.write(list_as_string)
+print(total_length)
 exit()
 a=[]
 for i,v in enumerate(section):

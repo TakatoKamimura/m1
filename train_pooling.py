@@ -148,7 +148,7 @@ def train(num_epoch):
                     batch_bar.set_postfix(OrderedDict(loss=val_loss.val, acc=val_acc.val))
             v_loss.append(s)
             v_acc.append(a_s/l)
-            torch.save(model.to('cpu').state_dict(), 'Weight/'+str(epoch+1)+'kuzuha_pooling.pth')
+            torch.save(model.to('cpu').state_dict(), 'Weight/'+str(epoch+1)+'kuzuha_kirinukishuu_pooling.pth')
         print(v_loss)
         print(v_acc)
         Min=v_loss.index(min(v_loss))+1
@@ -180,7 +180,7 @@ def test(test_dataset,Min):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     # dataset = Data.MyDataset()
     model = Model.BERT_A()
-    model.load_state_dict(torch.load('Weight/'+str(Min)+'kuzuha_pooling.pth'))
+    model.load_state_dict(torch.load('Weight/'+str(Min)+'kuzuha_kirinukishuu_pooling.pth'))
     model.eval()
     model.to(device)
     # Train_dataset,test_dataset=torch.utils.data.random_split(dataset, [int(len(dataset)*0.9), len(dataset)-int(len(dataset)*0.9)])
@@ -207,7 +207,7 @@ def test(test_dataset,Min):
 
 
 
-test_dataset,Min=train(20)
+test_dataset,Min=train(50)
 print(Min)
 accuracy=test(test_dataset,Min)
 print('精度')
