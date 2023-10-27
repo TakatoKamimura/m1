@@ -210,7 +210,7 @@ list_as_string = ",".join([str(sublist) for sublist in section])
 with open("output.txt", "w") as file:
     file.write(list_as_string)
 print(total_length)
-
+exit()
 a=[]
 for i,v in enumerate(section):
     editor=ed(v[0],v[1])

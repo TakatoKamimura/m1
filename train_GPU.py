@@ -85,11 +85,11 @@ def train(num_epoch):
     v_acc=[]
     criterion = nn.BCEWithLogitsLoss()
     optimizer = torch.optim.AdamW(params=model.fc.parameters(), lr=1e-3)
-    bert_top_params = []
-    for name, param in model.named_parameters():
-        if "bert.pooler" in name:
-            bert_top_params.append(param)
-    optimizer.add_param_group({'params':bert_top_params,'lr':1e-3})
+    # bert_top_params = []
+    # for name, param in model.named_parameters():
+    #     if "bert.pooler" in name:
+    #         bert_top_params.append(param)
+    # optimizer.add_param_group({'params':bert_top_params,'lr':1e-3})
     Train_dataset,test_dataset=torch.utils.data.random_split(dataset, [int(len(dataset)*0.9), len(dataset)-int(len(dataset)*0.9)])
     
     with tqdm(range(num_epoch)) as epoch_bar:
@@ -148,7 +148,7 @@ def train(num_epoch):
                     batch_bar.set_postfix(OrderedDict(loss=val_loss.val, acc=val_acc.val))
             v_loss.append(s)
             v_acc.append(a_s/l)
-            torch.save(model.to('cpu').state_dict(), 'Weight/'+str(epoch+1)+'kuzuha_GPU.pth')
+            torch.save(model.to('cpu').state_dict(), 'Weight/'+str(epoch+1)+'kuzuha_kirinukich_usingWrime.pth')
         print(v_loss)
         print(v_acc)
         Min=v_loss.index(min(v_loss))+1
@@ -180,7 +180,7 @@ def test(test_dataset,Min):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     # dataset = Data.MyDataset()
     model = Model.BERT_A()
-    model.load_state_dict(torch.load('Weight/'+str(Min)+'kuzuha_GPU.pth'))
+    model.load_state_dict(torch.load('Weight/'+str(Min)+'kuzuha_kirinukich_usingWrime.pth'))
     model.eval()
     model.to(device)
     # Train_dataset,test_dataset=torch.utils.data.random_split(dataset, [int(len(dataset)*0.9), len(dataset)-int(len(dataset)*0.9)])
@@ -207,7 +207,7 @@ def test(test_dataset,Min):
 
 
 
-test_dataset,Min=train(1)
+test_dataset,Min=train(50)
 print(Min)
 accuracy=test(test_dataset,Min)
 print('精度')

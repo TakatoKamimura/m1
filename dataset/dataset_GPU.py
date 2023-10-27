@@ -2,16 +2,21 @@ import pandas as pd
 import torch
 from torch.utils.data import DataLoader
 from transformers import BertJapaneseTokenizer
-
+import re
 
 class MyDataset(torch.utils.data.Dataset):
-    def __init__(self, df=pd.read_csv("textchat_from_youtube\\JmOGWt-XjzI(葛葉切り抜き集用).csv",usecols=['コメント','ラベル'])):
+    def __init__(self, df=pd.read_csv("textchat_from_youtube\\usingWrime.csv",usecols=['コメント','ラベル'])):
         self.tokenizer = BertJapaneseTokenizer.from_pretrained('cl-tohoku/bert-base-japanese-whole-word-masking')
         # self.comment = df["コメント"]
         self.comment = []
 
         for comment in df["コメント"]:
-            bert_tokens=self.tokenizer.encode(str(comment))
+            comment=str(comment)
+            # 特殊文字（\W）の連続を削除
+            comment = re.sub(r"(\W)\1+", r"\1", comment)
+            # 文字の連続を最大2文字までに制限
+            comment = re.sub(r"(\w)\1{2,}", r"\1\1", comment)
+            bert_tokens=self.tokenizer.encode(comment)
             bert_tokens=torch.tensor(bert_tokens)
             self.comment.append(bert_tokens)
         # self.label=df["ラベル"]
