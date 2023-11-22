@@ -160,43 +160,85 @@ time_1=0
 time_2=0
 time_3=0
 time_4=0
+time_5=0
+time_6=0
+time_7=0
+time_8=0
+time_9=0
+time_10=0
 
 
 for interval_info, count in interval_counts_sorted.items():
     # if a>10:
     #     break
-    if time_1>750 and time_2>750 and time_3>750 and time_4>750:
+    if time_1>300 and time_2>300 and time_3>300 and time_4>300 and time_5>300 and time_6>300 and time_7>300 and time_8>300 and time_9>300 and time_10>300:
         break
     start = interval_info.left.time()
     end = interval_info.right.time()
     start_seconds = start.hour * 3600 + start.minute * 60 + start.second-20
     end_seconds = end.hour * 3600 + end.minute * 60 + end.second
 
-    if end_seconds<=5500:
-        if time_1>750:
+    if end_seconds<=2200:
+        if time_1>300:
             continue
         time_1+=30
         section.append([start_seconds,end_seconds])
         section,time_1=merge_intervals(section,time_1)
-    elif end_seconds<=11000:
-        if time_2>750:
+    elif end_seconds<=4400:
+        if time_2>300:
             continue
         time_2+=30
         section.append([start_seconds,end_seconds])
         section,time_2=merge_intervals(section,time_2)
-    elif end_seconds<=16500:
-        if time_3>750:
+    elif end_seconds<=6600:
+        if time_3>300:
             continue
         time_3+=30
         section.append([start_seconds,end_seconds])
         section,time_3=merge_intervals(section,time_3)
-    elif end_seconds<=22000:
-        if time_4>750:
+    elif end_seconds<=8800:
+        if time_4>300:
             continue
         time_4+=30
         section.append([start_seconds,end_seconds])
         section,time_4=merge_intervals(section,time_4)
-    print("time_1",time_1, "time_2", time_2,"time_3",time_3,"time_4",time_4)
+    elif end_seconds<=11000:
+        if time_5>300:
+            continue
+        time_5+=30
+        section.append([start_seconds,end_seconds])
+        section,time_5=merge_intervals(section,time_5)
+    elif end_seconds<=13200:
+        if time_6>300:
+            continue
+        time_6+=30
+        section.append([start_seconds,end_seconds])
+        section,time_6=merge_intervals(section,time_6)
+    elif end_seconds<=15400:
+        if time_7>300:
+            continue
+        time_7+=30
+        section.append([start_seconds,end_seconds])
+        section,time_7=merge_intervals(section,time_7)
+    elif end_seconds<=17600:
+        if time_8>300:
+            continue
+        time_8+=30
+        section.append([start_seconds,end_seconds])
+        section,time_8=merge_intervals(section,time_8)
+    elif end_seconds<=19800:
+        if time_9>300:
+            continue
+        time_9+=30
+        section.append([start_seconds,end_seconds])
+        section,time_9=merge_intervals(section,time_9)
+    elif end_seconds<=22000:
+        if time_10>300:
+            continue
+        time_10+=30
+        section.append([start_seconds,end_seconds])
+        section,time_10=merge_intervals(section,time_10)
+    print("time_1",time_1, "time_2", time_2,"time_3",time_3,"time_4",time_4,"time_5",time_5,"time_6", time_6,"time7",time_7,"time_8",time_8,"time_9",time_9, "time_10", time_10)
 
 
     a+=1

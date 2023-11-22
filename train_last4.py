@@ -4,7 +4,7 @@ from tqdm import tqdm
 from torch.utils.data import DataLoader
 from collections import OrderedDict
 from matplotlib import pyplot as plt
-from models import models_pooling as Model
+from models import models_last4_pooling as Model
 from dataset import dataset_GPU as Data
 import os
 import numpy as np
@@ -85,13 +85,13 @@ def train(num_epoch):
     v_acc=[]
     criterion = nn.BCEWithLogitsLoss()
     optimizer = torch.optim.AdamW(params=model.fc.parameters(), lr=1e-3)
-    bert_top_params = []
-    for name, param in model.named_parameters():
-        if "bert.pooler" in name:
-            bert_top_params.append(param)
-    optimizer.add_param_group({'params':bert_top_params,'lr':1e-3})
+    # bert_top_params = []
+    # for name, param in model.named_parameters():
+    #     if "bert.pooler" in name:
+    #         bert_top_params.append(param)
+    # optimizer.add_param_group({'params':bert_top_params,'lr':1e-3})
     Train_dataset,test_dataset=torch.utils.data.random_split(dataset, [int(len(dataset)*0.9), len(dataset)-int(len(dataset)*0.9)])
-    
+    return test_dataset,1
     with tqdm(range(num_epoch)) as epoch_bar:
         for epoch in epoch_bar:
             train_loss=AverageMeter()
@@ -113,6 +113,7 @@ def train(num_epoch):
                     label=label.to(device)
                     optimizer.zero_grad()#勾配の初期化
                     output = model(batch)#順伝搬
+                    output=output.view(-1,1)
                     loss = criterion(output, label)#損失の計算
                     loss.backward()#誤差逆伝搬
                     optimizer.step()#重みの更新
@@ -138,6 +139,7 @@ def train(num_epoch):
                     label=label.to(device)
                     batch=batch.to(device)
                     output = model(batch)#順伝搬
+                    output=output.view(-1,1)
                     loss = criterion(output, label)#損失の計算
                     s+=loss.item()
                     val_loss.update(loss,1)
@@ -148,7 +150,7 @@ def train(num_epoch):
                     batch_bar.set_postfix(OrderedDict(loss=val_loss.val, acc=val_acc.val))
             v_loss.append(s)
             v_acc.append(a_s/l)
-            torch.save(model.to('cpu').state_dict(), 'Weight/'+str(epoch+1)+'kuzuha_kirinukich_pooling_usingWrime.pth')
+            torch.save(model.to('cpu').state_dict(), 'Weight/'+str(epoch+1)+'kuzuha_kirinukich_usingWrime_last4pooling.pth')
         print(v_loss)
         print(v_acc)
         Min=v_loss.index(min(v_loss))+1
@@ -180,7 +182,7 @@ def test(test_dataset,Min):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     # dataset = Data.MyDataset()
     model = Model.BERT_A()
-    model.load_state_dict(torch.load('Weight/'+str(Min)+'kuzuha_kirinukich_pooling_usingWrime.pth'))
+    model.load_state_dict(torch.load('Weight/kuzuha_kirinukich_usingWrime_last4pooling.pth'))
     model.eval()
     model.to(device)
     # Train_dataset,test_dataset=torch.utils.data.random_split(dataset, [int(len(dataset)*0.9), len(dataset)-int(len(dataset)*0.9)])
@@ -198,6 +200,7 @@ def test(test_dataset,Min):
                     label=label.to(device)
                     batch=batch.to(device)
                     output = model(batch)#順伝搬
+                    output=output.view(-1,1)
                     a=acc2(output,label)
                     accuracy+=a
     return accuracy/len(test_dataset)

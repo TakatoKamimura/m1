@@ -13,12 +13,13 @@ import pandas as pd
 
 
 def pred(num_epoch):
-    # device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     dataset = Data.MyDataset()
     # train_dataset,test_dataset=torch.utils.data.random_split(dataset, [int(len(dataset)*0.9), len(dataset)-int(len(dataset)*0.9)])
     # data_loader = DataLoader(train_dataset,batch_size=1,shuffle=True, drop_last=True)
     model=Model.BERT_A()
-    model.load_state_dict(torch.load('Weight/kuzuha_kirinuki.pth'))
+    model.to(device)
+    model.load_state_dict(torch.load('Weight/kuzuha_kirinukich_usingWrime.pth'))
     # model=Model.BERT_B()
     # v_loss=[]
     # v_acc=[]
@@ -32,10 +33,11 @@ def pred(num_epoch):
             model.eval()
             with tqdm(enumerate(data_loader),
                       total=len(data_loader),
-                      leave=False) as batch_bar:
+                      leave=False,ncols=50) as batch_bar:
                 for i, (batch) in batch_bar:
                     # batch = list(batch)#タプルをリストに
                     #print(batch)
+                    batch=batch.to(device)
                     output = model(batch)#順伝搬
                     output = sigmoid(output)
                     output = list(output)
@@ -51,7 +53,7 @@ def pred(num_epoch):
     print(len(pred))
     print(pred)
     print(df)
-    df.to_csv('textchat_from_youtube\\new_lYJE1CBf_2o(kuzuha_vcc_葛葉切り抜き集).csv',encoding='utf-8',index=False)
+    df.to_csv('textchat_from_youtube\\new_lYJE1CBf_2o(kuzuha_vcc_葛葉切り抜きch)_usingwrime.csv',encoding='utf-8',index=False)
 
                 
 
