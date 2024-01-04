@@ -19,7 +19,7 @@ def pred(num_epoch):
     # data_loader = DataLoader(train_dataset,batch_size=1,shuffle=True, drop_last=True)
     model=Model.BERT_A()
     model.to(device)
-    model.load_state_dict(torch.load('Weight/kuzuha_kirinukich_usingWrime.pth'))
+    model.load_state_dict(torch.load('Weight\\28kuzuha_kirinukich_Wrime無し_batch8_val改善.pth'))
     # model=Model.BERT_B()
     # v_loss=[]
     # v_acc=[]
@@ -44,16 +44,16 @@ def pred(num_epoch):
                     for out in output:
                         if out >= 0.5:
                             pred.append(1)
-                            print(1)
+                            # print(1)
                         else:
                             pred.append(0)
-                            print(0)
+                            # print(0)
     pred=pd.DataFrame(pred)
     df['予測値']=pred
     print(len(pred))
     print(pred)
     print(df)
-    df.to_csv('textchat_from_youtube\\new_lYJE1CBf_2o(kuzuha_vcc_葛葉切り抜きch)_usingwrime.csv',encoding='utf-8',index=False)
+    df.to_csv('textchat_from_youtube\\lYJE1CBf_2o_28kuzuha_kirinukich_Wrime無し_batch8_val改善.csv',encoding='utf-8',index=False)
 
                 
 

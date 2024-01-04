@@ -139,7 +139,7 @@ def merge_intervals(intervals,time):
 
 
 # CSVファイルを読み込み
-df = pd.read_csv('textchat_from_youtube\\new_lYJE1CBf_2o(kuzuha_vcc_葛葉切り抜きch)_usingwrime.csv')
+df = pd.read_csv('textchat_from_youtube\\lYJE1CBf_2o_Wrime無し、ちょい削り')
 
 # 時間をdatetime型に変換
 df['時間'] = pd.to_datetime(df['時間'], unit='s')
@@ -149,7 +149,12 @@ df['時間'] = pd.cut(df['時間'], pd.date_range(start=df['時間'].iloc[0], en
 
 # 区間ごとに1と予測されたデータの数を集計
 interval_counts = df[df['予測値'] == 1].groupby('時間').size()
-interval_counts_sorted = interval_counts.sort_values(ascending=False)
+total_counts = df.groupby('時間').size()
+
+# 割合を計算し、新しい列に追加
+interval_ratios = interval_counts*(interval_counts / total_counts)
+interval_counts_sorted = interval_ratios.sort_values(ascending=False)
+
 # 結果を出力
 print(interval_counts_sorted)
 section=[]
@@ -171,7 +176,7 @@ time_10=0
 for interval_info, count in interval_counts_sorted.items():
     # if a>10:
     #     break
-    if time_1>300 and time_2>300 and time_3>300 and time_4>300 and time_5>300 and time_6>300 and time_7>300 and time_8>300 and time_9>300 and time_10>300:
+    if time_1+time_2+time_3+time_4+time_5+time_6+time_7+time_8+time_9+time_10>3000:
         break
     start = interval_info.left.time()
     end = interval_info.right.time()
@@ -179,61 +184,61 @@ for interval_info, count in interval_counts_sorted.items():
     end_seconds = end.hour * 3600 + end.minute * 60 + end.second
 
     if end_seconds<=2200:
-        if time_1>300:
+        if time_1>600:
             continue
         time_1+=30
         section.append([start_seconds,end_seconds])
         section,time_1=merge_intervals(section,time_1)
     elif end_seconds<=4400:
-        if time_2>300:
+        if time_2>600:
             continue
         time_2+=30
         section.append([start_seconds,end_seconds])
         section,time_2=merge_intervals(section,time_2)
     elif end_seconds<=6600:
-        if time_3>300:
+        if time_3>600:
             continue
         time_3+=30
         section.append([start_seconds,end_seconds])
         section,time_3=merge_intervals(section,time_3)
     elif end_seconds<=8800:
-        if time_4>300:
+        if time_4>600:
             continue
         time_4+=30
         section.append([start_seconds,end_seconds])
         section,time_4=merge_intervals(section,time_4)
     elif end_seconds<=11000:
-        if time_5>300:
+        if time_5>600:
             continue
         time_5+=30
         section.append([start_seconds,end_seconds])
         section,time_5=merge_intervals(section,time_5)
     elif end_seconds<=13200:
-        if time_6>300:
+        if time_6>600:
             continue
         time_6+=30
         section.append([start_seconds,end_seconds])
         section,time_6=merge_intervals(section,time_6)
     elif end_seconds<=15400:
-        if time_7>300:
+        if time_7>600:
             continue
         time_7+=30
         section.append([start_seconds,end_seconds])
         section,time_7=merge_intervals(section,time_7)
     elif end_seconds<=17600:
-        if time_8>300:
+        if time_8>600:
             continue
         time_8+=30
         section.append([start_seconds,end_seconds])
         section,time_8=merge_intervals(section,time_8)
     elif end_seconds<=19800:
-        if time_9>300:
+        if time_9>600:
             continue
         time_9+=30
         section.append([start_seconds,end_seconds])
         section,time_9=merge_intervals(section,time_9)
     elif end_seconds<=22000:
-        if time_10>300:
+        if time_10>600:
             continue
         time_10+=30
         section.append([start_seconds,end_seconds])

@@ -7,7 +7,7 @@ from googletrans import Translator
 wb = op.Workbook()
 sheet=wb.active
 sheet.title="チャットリプレイ"
-stream = pytchat.create(video_id = "lYJE1CBf_2o")
+stream = pytchat.create(video_id = "Pnjo9clVT7U")
 cnt=2
 cnt1=0
 i = 0
@@ -26,7 +26,6 @@ while stream.is_alive():
       continue
     # print(f"{c.timestamp},{c.message}")
     print(f"{c.timestamp},{result}")
-
     sel1="A"+str(cnt)
     sel2="B"+str(cnt)
   #   sel3="C"+str(cnt)
@@ -48,7 +47,7 @@ stream.terminate
 end_time=time.time()
 print(end_time-start_time)
 stream.terminate()
-wb.save("textchat_from_youtube\\lYJE1CBf_2o(kuzuha_vcc).csv")
+wb.save("textchat_from_youtube\\Pnjo9clVT7U(kuzuha_kirinuitemita_Vsaikyou).csv")
 wb.close()
 
 # retrieve chatdata from the continuation.

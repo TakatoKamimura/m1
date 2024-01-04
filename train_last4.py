@@ -91,7 +91,6 @@ def train(num_epoch):
     #         bert_top_params.append(param)
     # optimizer.add_param_group({'params':bert_top_params,'lr':1e-3})
     Train_dataset,test_dataset=torch.utils.data.random_split(dataset, [int(len(dataset)*0.9), len(dataset)-int(len(dataset)*0.9)])
-    return test_dataset,1
     with tqdm(range(num_epoch)) as epoch_bar:
         for epoch in epoch_bar:
             train_loss=AverageMeter()

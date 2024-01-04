@@ -25,9 +25,11 @@ class BERT_A(nn.Module):
     def forward(self, input) -> torch.Tensor:
         # BERTの出力を取得
         outputs = self.bert(input)
-        hidden_states = outputs.last_hidden_state
-        
+        print(outputs["hidden_states"].size())
         # 平均プーリングを行う
+        cls=torch.cat([outputs["hidden_states"][-1*i][:,0] for i in range(1, 4+1)], dim=1)
+        print(cls.size())
+        exit()
         pooled_output = torch.mean(hidden_states[-4:][:,0,:], dim=0)
         # 全結合層に入力して順伝搬の出力を得る
         output = self.fc(pooled_output)

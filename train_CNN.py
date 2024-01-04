@@ -92,7 +92,6 @@ def train(num_epoch):
     #         bert_top_params.append(param)
     # optimizer.add_param_group({'params':bert_top_params,'lr':1e-3})
     Train_dataset,test_dataset=torch.utils.data.random_split(dataset, [int(len(dataset)*0.9), len(dataset)-int(len(dataset)*0.9)])
-    return test_dataset,1
     with tqdm(range(num_epoch)) as epoch_bar:
         for epoch in epoch_bar:
             train_loss=AverageMeter()
@@ -151,7 +150,7 @@ def train(num_epoch):
                     batch_bar.set_postfix(OrderedDict(loss=val_loss.val, acc=val_acc.val))
             v_loss.append(s)
             v_acc.append(a_s/l)
-            torch.save(model.to('cpu').state_dict(), 'Weight/'+str(epoch+1)+'kuzuha_kirinukich_usingWrime_CNN_200.pth')
+            torch.save(model.to('cpu').state_dict(), 'Weight/'+str(epoch+1)+'kuzuha_kirinukich_Wrime無し_CNN_200.pth')
         print(v_loss)
         print(v_acc)
         Min=v_loss.index(min(v_loss))+1
@@ -163,17 +162,20 @@ def train(num_epoch):
         y = np.array(v_loss)
         y1=np.array(v_acc)
         plt.title("loss")
-        plt.xlabel("X axis")
-        plt.ylabel("Y axis")
+        plt.xlabel("epoch")
+        plt.ylabel("loss_sum")
         plt.plot(x, y, color = "red", marker = "o", label = "Array elements")
         plt.legend()
+        plt.savefig("loss_acc_png\\Wrime無し_削り_CNN_loss.png")
         plt.show()
+        
 
         plt.title("acc")
-        plt.xlabel("X axis")
-        plt.ylabel("Y axis")
+        plt.xlabel("epoch")
+        plt.ylabel("accuracy")
         plt.plot(x, y1, color = "blue", marker = "o", label = "Array elements")
         plt.legend()
+        plt.savefig("loss_acc_png\\Wrime無し_削り_CNN_acc.png")
         plt.show()
     return test_dataset,Min
 
@@ -183,10 +185,9 @@ def test(test_dataset,Min):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     # dataset = Data.MyDataset()
     model = Model.BERT_A()
-    model.load_state_dict(torch.load('Weight/kuzuha_kirinukich_usingWrime_CNN_200.pth'))
+    model.load_state_dict(torch.load('Weight/'+str(Min)+'kuzuha_kirinukich_Wrime無し_CNN_200.pth'))
     model.eval()
     model.to(device)
-    # Train_dataset,test_dataset=torch.utils.data.random_split(dataset, [int(len(dataset)*0.9), len(dataset)-int(len(dataset)*0.9)])
     with tqdm(range(1)) as epoch_bar:
         for epoch in epoch_bar:
             epoch_bar.set_description("[Epoch %d]" % (epoch))
