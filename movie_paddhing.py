@@ -19,7 +19,7 @@ def pred(num_epoch):
     # data_loader = DataLoader(train_dataset,batch_size=1,shuffle=True, drop_last=True)
     model=Model.BERT_A()
     model.to(device)
-    model.load_state_dict(torch.load('Weight\\36kuzuha_kirinukich_end_padding_truncation.pth'))
+    model.load_state_dict(torch.load('Weight\\37kuzuha_kirinukich_Wrim無し統合_batch8_val改善_使うやつ.pth'))
     # model=Model.BERT_B()
     # v_loss=[]
     # v_acc=[]
@@ -29,7 +29,7 @@ def pred(num_epoch):
     with tqdm(range(num_epoch)) as epoch_bar:
         for epoch in epoch_bar:
             epoch_bar.set_description("[Epoch %d]" % (epoch))
-            data_loader = DataLoader(dataset,batch_size=1,shuffle=False, drop_last=True)
+            data_loader = DataLoader(dataset,batch_size=10,shuffle=False, drop_last=True)
             model.eval()
             with tqdm(enumerate(data_loader),
                       total=len(data_loader),
@@ -54,7 +54,7 @@ def pred(num_epoch):
     print(len(pred))
     print(pred)
     print(df)
-    df.to_csv('textchat_from_youtube\\lYJE1CBf_2o_end_paddhing_truncation',encoding='utf-8',index=False)
+    df.to_csv('textchat_from_youtube\\lYJE1CBf_2o_37kuzuha_kirinukich_Wrim無し統合_batch8_val改善_使うやつ',encoding='utf-8',index=False)
 
                 
 

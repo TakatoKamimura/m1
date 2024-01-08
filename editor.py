@@ -12,6 +12,6 @@ class editor():
         return concatenate_videoclips(clip)
     
     def save(a):
-        a.write_videofile('movie\\lYJE1CBf_2o_28kuzuha_kirinukich_Wrime無し_batch8_val改善_output.mp4')
+        a.write_videofile('movie\\lYJE1CBf_2o_37kuzuha_kirinukich_Wrim無し統合_batch8_val改善_使うやつ _開始40分.mp4')
 
 

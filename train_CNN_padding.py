@@ -108,12 +108,11 @@ def train(num_epoch):
     # Train_dataset,test_dataset=torch.utils.data.random_split(dataset, [int(len(dataset)*0.9), len(dataset)-int(len(dataset)*0.9)])
     train_ratio = 0.8
     val_ratio = 0.1
-
+    torch.manual_seed(42)
     train_size = math.ceil(len(dataset) * train_ratio)
     val_size = math.ceil(len(dataset) * val_ratio)
     test_size = len(dataset) - train_size - val_size
-    train_dataset, val_dataset, test_dataset = torch.utils.data.random_split(dataset, [train_size, val_size, test_size]
-    )
+    train_dataset, val_dataset, test_dataset = torch.utils.data.random_split(dataset, [train_size, val_size, test_size])
     with tqdm(range(num_epoch)) as epoch_bar:
         for epoch in epoch_bar:
             train_loss=AverageMeter()
@@ -121,7 +120,6 @@ def train(num_epoch):
             val_loss=AverageMeter()
             val_acc=AverageMeter()
             epoch_bar.set_description("[Epoch %d]" % (epoch))
-            # train_dataset,val_dataset=torch.utils.data.random_split(Train_dataset, [int(len(Train_dataset)*0.9), len(Train_dataset)-int(len(Train_dataset)*0.9)])
             data_loader = DataLoader(train_dataset,batch_size=8,shuffle=True, drop_last=True)
             model.train().to(device)
             with tqdm(enumerate(data_loader),
@@ -148,7 +146,6 @@ def train(num_epoch):
                     batch_bar.set_postfix(OrderedDict(loss=train_loss.val, acc=train_acc.val))
             
             #評価
-            l=len(val_dataset)
             data_loader = DataLoader(val_dataset,batch_size=8,shuffle=True, drop_last=True)
             model.eval().to(device)
             s=0
@@ -167,12 +164,12 @@ def train(num_epoch):
                     val_loss.update(loss,8)
                     a=acc(output,label)
                     # print(a)
-                    a_s+=a*8
+                    a_s+=a
                     val_acc.update(a, 8)
                     batch_bar.set_postfix(OrderedDict(loss=val_loss.val, acc=val_acc.val))
-            v_loss.append(s)
-            v_acc.append(a_s/l)
-            torch.save(model.to('cpu').state_dict(), 'Weight/'+str(epoch+1)+'kuzuha_kirinukich_Wrime無し_batch8_val改善_CNN.pth')
+            v_loss.append(s/len(data_loader))
+            v_acc.append(a_s/len(data_loader))
+            torch.save(model.to('cpu').state_dict(), 'Weight/'+str(epoch+1)+'kuzuha_kirinukich_Wrime無し統合_batch8_val改善_CNN.pth')
         print(v_loss)
         print(v_acc)
         Min=v_loss.index(min(v_loss))+1
@@ -188,7 +185,7 @@ def train(num_epoch):
         plt.ylabel("loss_sum")
         plt.plot(x, y, color = "red", marker = "o", label = "Array elements")
         plt.legend()
-        plt.savefig("loss_acc_png\\Wrime無し_batch8_val改善_CNN_loss.png")
+        plt.savefig("loss_acc_png\\Wrime無し統合_batch8_val改善_CNN_loss.png")
         plt.show()
 
         plt.title("acc")
@@ -196,7 +193,7 @@ def train(num_epoch):
         plt.ylabel("acc_sum")
         plt.plot(x, y1, color = "blue", marker = "o", label = "Array elements")
         plt.legend()
-        plt.savefig("loss_acc_png\\Wrime無し_batch8_val改善_CNN_acc.png")
+        plt.savefig("loss_acc_png\\Wrime無し統合_batch8_val改善_CNN_acc.png")
         plt.show()
     return test_dataset,Min
 
@@ -241,7 +238,7 @@ def test(test_dataset, Min):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     model = Model.BERT_A()
     # model.load_state_dict(torch.load('Weight/'+str(Min)+'kuzuha_kirinukich_end_padding_truncation.pth'))
-    model.load_state_dict(torch.load('Weight/'+str(Min)+'kuzuha_kirinukich_Wrime無し_batch8_val改善_CNN.pth'))
+    model.load_state_dict(torch.load('Weight/'+str(Min)+'kuzuha_kirinukich_Wrime無し統合_batch8_val改善_CNN.pth'))
     model.eval()
     model.to(device)
 
@@ -300,3 +297,4 @@ print(f'False Negative: {fn}')
 print(f'Precision: {precision}')
 print(f'Specificity: {specificity}')
 print(f'Recall: {recall}')
+print(f'精度:{(tp+tn)/(tp+tn+fp+fn)}')
