@@ -44,48 +44,6 @@ def acc(input, labels):
     labels = labels.view(-1)  # テンソルをフラットにする
     acc = torch.sum(output == labels).item()  # 正しい予測数を計算
     return acc/8
-    output = list(output)
-    # print(output[0])
-    preds = []
-    for out in output:
-        if out >= 0.5:
-            preds.append(1)
-        else:
-            preds.append(0)
-    # print('ラベル：',end='')
-    # print(labels)
-    # print('予測：',end='')
-    # print(preds)
-    preds = torch.Tensor(preds)
-    device=labels.device
-    preds=preds.to(device)
-    preds.view(-1,1)
-    print(labels)
-    print(preds)
-
-    acc = preds.eq(labels).sum().item()
-    print(acc)
-    exit()
-    return acc / 8
-
-def acc2(input, labels):
-    bs = input.size(0)
-    # print(bs)
-    sigmoid = nn.Sigmoid()
-    output=sigmoid(input)
-    output = list(output)
-    preds = []
-    for out in output:
-        if out >= 0.5:
-            preds.append(1)
-        else:
-            preds.append(0)
-    preds = torch.Tensor(preds)
-    device=labels.device
-    preds=preds.to(device)
-
-    acc = preds.eq(labels).sum().item()
-    return acc / 8
 
 def train(num_epoch):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")

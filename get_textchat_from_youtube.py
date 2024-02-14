@@ -6,7 +6,7 @@ import re
 wb = op.Workbook()
 sheet=wb.active
 sheet.title="チャットリプレイ"
-stream = pytchat.create(video_id = "テキストチャットを取得したいアーカイブ動画のURLの'?v='の後に続いている文字列")
+stream = pytchat.create(video_id = "F_flzRlBNM0")
 cnt=2
 cnt1=0
 i = 0
