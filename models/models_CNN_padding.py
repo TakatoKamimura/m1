@@ -38,41 +38,16 @@ class BERT_A(nn.Module):
     def __init__(self):
         super().__init__()
         self.bert=BertModel.from_pretrained('cl-tohoku/bert-base-japanese-whole-word-masking')
-        self.cnn1 = nn.Conv1d(768, 200, kernel_size=2, padding=1)
-        self.cnn2 = nn.Conv1d(200, 1, kernel_size=2, padding=1)
-        self.relu=nn.ReLU()
+        self.cnn1 = nn.Conv1d(100, 150, kernel_size=2, padding=0)
+        self.linear=nn.Linear(767,1)
     def forward(self, input_ids,mask,):
+        relu=nn.ReLU()
         outputs = self.bert(input_ids, mask)
-        last_hidden_state = outputs['last_hidden_state'].permute(0, 2, 1)
-        cnn_embeddings = self.relu(self.cnn1(last_hidden_state))
-        cnn_embeddings = self.cnn2(cnn_embeddings)
-        logits, _ = torch.max(cnn_embeddings, 2)
+        last_hidden_state = outputs['last_hidden_state']
+        cnn_embeddings = relu(self.cnn1(last_hidden_state))
+        logits, _ = torch.max(cnn_embeddings, 1)
+        logits=self.linear(logits)
         return logits
-    # def __init__(self):
-    #     super().__init__()
-    #     self.bert = BertModel.from_pretrained('cl-tohoku/bert-base-japanese-whole-word-masking')
-    #     self.conv1 = nn.Conv1d(in_channels=768, out_channels=200, kernel_size=3, padding=1)
-    #     self.pool = nn.MaxPool1d(kernel_size=2)
-    #     self.fc = nn.Linear(200, 1)
-    #     self.relu=nn.ReLU()
-    # def forward(self, input_ids,mask):
-    #     # BERT forward pass
-    #     outputs = self.bert(input_ids, mask)
-    #     last_hidden_state = outputs.last_hidden_state
-    #     attention_mask_expanded = mask.unsqueeze(-1).expand(last_hidden_state.size())
-    #     last_hidden_state = last_hidden_state * attention_mask_expanded
-    #     # CNN forward pass
-    #     x = self.conv1(last_hidden_state.permute(0, 2, 1))
-    #     x = self.relu(x)
-    #     x = self.pool(x)
-        
-    #     # Flatten the output before fully connected layer
-    #     x = x.view(x.size(0), -1)
-        
-    #     # Fully connected layer
-    #     logits = self.fc(x)
-        
-    #     return logits
 class BERT_B(nn.Module): 
     def __init__(self):
         super().__init__()

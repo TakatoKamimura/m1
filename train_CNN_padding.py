@@ -99,13 +99,6 @@ def train(num_epoch):
     optimizer = torch.optim.AdamW(params=model.parameters(), lr=1e-3)
     for param in model.bert.parameters():
         param.requires_grad = False
-
-    # bert_top_params = []
-    # for name, param in model.named_parameters():
-    #     if "bert.pooler" in name:
-    #         bert_top_params.append(param)
-    # optimizer.add_param_group({'params':bert_top_params,'lr':1e-3})
-    # Train_dataset,test_dataset=torch.utils.data.random_split(dataset, [int(len(dataset)*0.9), len(dataset)-int(len(dataset)*0.9)])
     train_ratio = 0.8
     val_ratio = 0.1
     torch.manual_seed(42)
@@ -182,7 +175,6 @@ def train(num_epoch):
         y1=np.array(v_acc)
         plt.title("loss")
         plt.xlabel("epoch")
-        plt.ylabel("loss_sum")
         plt.plot(x, y, color = "red", marker = "o", label = "Array elements")
         plt.legend()
         plt.savefig("loss_acc_png\\Wrime無し統合_batch8_val改善_CNN_loss.png")
@@ -190,7 +182,6 @@ def train(num_epoch):
 
         plt.title("acc")
         plt.xlabel("epoch")
-        plt.ylabel("acc_sum")
         plt.plot(x, y1, color = "blue", marker = "o", label = "Array elements")
         plt.legend()
         plt.savefig("loss_acc_png\\Wrime無し統合_batch8_val改善_CNN_acc.png")
@@ -282,7 +273,7 @@ def test(test_dataset, Min):
                     false_negative += fn
 
     return true_positive, false_positive, true_negative, false_negative
-test_dataset,min=train(50)
+test_dataset,min=train(10)
 print(min)
 tp, fp, tn, fn = test(test_dataset, min)
 

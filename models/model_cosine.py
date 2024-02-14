@@ -9,7 +9,7 @@ class SentenceBertJapanese:
         self.model.eval()
 
         if device is None:
-            device = "cuda" if torch.cuda.is_available() else "cpu"
+            device = "cpu"
         self.device = torch.device(device)
         self.model.to(device)
 

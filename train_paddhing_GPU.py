@@ -44,29 +44,6 @@ def acc(input, labels):
     labels = labels.view(-1)  # テンソルをフラットにする
     acc = torch.sum(output == labels).item()  # 正しい予測数を計算
     return acc/8
-    output = list(output)
-    # print(output[0])
-    preds = []
-    for out in output:
-        if out >= 0.5:
-            preds.append(1)
-        else:
-            preds.append(0)
-    # print('ラベル：',end='')
-    # print(labels)
-    # print('予測：',end='')
-    # print(preds)
-    preds = torch.Tensor(preds)
-    device=labels.device
-    preds=preds.to(device)
-    preds.view(-1,1)
-    print(labels)
-    print(preds)
-
-    acc = preds.eq(labels).sum().item()
-    print(acc)
-    exit()
-    return acc / 8
 
 def acc2(input, labels):
     bs = input.size(0)
@@ -159,7 +136,7 @@ def train(num_epoch):
                     batch_bar.set_postfix(OrderedDict(loss=val_loss.val, acc=val_acc.val))
             v_loss.append(s/len(data_loader))
             v_acc.append(a_s/len(data_loader))
-            torch.save(model.to('cpu').state_dict(), 'Weight/'+str(epoch+1)+'kuzuha_kirinukich_Wrim無し統合_batch8_val改善.pth')
+            torch.save(model.to('cpu').state_dict(), 'Weight/'+'保存したいファイル名')
         print(v_loss)
         print(v_acc)
         Min=v_loss.index(min(v_loss))+1
@@ -175,7 +152,7 @@ def train(num_epoch):
         plt.ylabel("loss_sum")
         plt.plot(x, y, color = "red", marker = "o", label = "val_loss")
         plt.legend()
-        plt.savefig("loss_acc_png\\Wrim無し統合_batch8_val改善_GPU_loss.png")
+        plt.savefig("loss_acc_png\\保存したいファイル名")
         plt.show()
 
         plt.title("acc")
@@ -183,7 +160,7 @@ def train(num_epoch):
         plt.ylabel("acc_sum")
         plt.plot(x, y1, color = "blue", marker = "o", label = "val_acc")
         plt.legend()
-        plt.savefig("loss_acc_png\\Wrim無し統合_batch8_val改善_GPU_acc.png")
+        plt.savefig("loss_acc_png\\保存したいファイル名")
         plt.show()
     return test_dataset,Min
 
@@ -199,7 +176,7 @@ def test(test_dataset, Min):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     model = Model.BERT_A()
     model.to(device)
-    model.load_state_dict(torch.load('Weight/'+str(Min)+'kuzuha_kirinukich_Wrim無し統合_batch8_val改善.pth'))
+    model.load_state_dict(torch.load('Weight/'+'読み込みたいファイル名'))
     model.eval()
 
 
@@ -246,11 +223,17 @@ def test(test_dataset, Min):
 
 test_dataset,min=train(50)
 print(min)
+
 tp, fp, tn, fn = test(test_dataset, min)
 
 precision = tp / (tp + fp)
 specificity = tn / (tn + fp)
 recall = tp / (tp + fn)
+
+precision = tp / (tp + fp)
+specificity = tn / (tn + fp)
+recall = tp / (tp + fn)
+f=(2*precision*recall)/(precision+recall)
 
 print(f'True Positive: {tp}')
 print(f'False Positive: {fp}')
@@ -259,4 +242,5 @@ print(f'False Negative: {fn}')
 print(f'Precision: {precision}')
 print(f'Specificity: {specificity}')
 print(f'Recall: {recall}')
+print(f'F:{f}')
 print(f'精度:{(tp+tn)/(tp+tn+fp+fn)}')

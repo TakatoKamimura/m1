@@ -50,7 +50,7 @@ def cosine_similarity(num_epoch):
                         count+=1
                         cos=[]
         result=sorted(result,reverse=True)
-        print(result)
+        # print(result)
 
 if __name__ == "__main__":
     cosine_similarity(1)

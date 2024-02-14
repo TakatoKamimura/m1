@@ -5,7 +5,7 @@ from transformers import BertJapaneseTokenizer
 import re
 
 class MyDataset(torch.utils.data.Dataset):
-    def __init__(self, df=pd.read_csv("textchat_from_youtube\\Wrime無し統合_downsampled.csv", usecols=['コメント','ラベル'])):
+    def __init__(self, df=pd.read_csv("textchat_from_youtube\\Wrime+Youtube_train.csv", usecols=['コメント','ラベル'])):
         self.tokenizer = BertJapaneseTokenizer.from_pretrained('cl-tohoku/bert-base-japanese-whole-word-masking')
         self.comment = []
         self.input_ids = []
@@ -14,13 +14,12 @@ class MyDataset(torch.utils.data.Dataset):
             comment = str(comment)
             comment = re.sub(r"(\W)\1+", r"\1", comment)
             comment = re.sub(r"(\w)\1{2,}", r"\1\1", comment)
-            bert_tokens = self.tokenizer.encode_plus(comment, max_length=100, padding='max_length', return_attention_mask=True, truncation=True)
+            bert_tokens = self.tokenizer.encode_plus(comment, max_length=512, padding='max_length', return_attention_mask=True, truncation=True)
             self.input_ids.append(bert_tokens['input_ids'])
             mask = torch.tensor(bert_tokens['attention_mask'])
             self.mask.append(mask)
             bert_tokens = torch.tensor(bert_tokens['input_ids'])
             self.comment.append(bert_tokens)
-        # self.max_length = max_length  # この行は不要
         self.labels = torch.tensor(df["ラベル"].astype('float32'))
 
     def __len__(self):

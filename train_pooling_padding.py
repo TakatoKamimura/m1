@@ -86,8 +86,8 @@ def train(num_epoch):
     val_size = math.ceil(len(dataset) * val_ratio)
     test_size = len(dataset) - train_size - val_size
     torch.manual_seed(42)
-    train_dataset, val_dataset, test_dataset = torch.utils.data.random_split(dataset, [train_size, val_size, test_size]
-    )
+    train_dataset, val_dataset, test_dataset = torch.utils.data.random_split(dataset, [train_size, val_size, test_size])
+    return test_dataset,28
     with tqdm(range(num_epoch)) as epoch_bar:
         for epoch in epoch_bar:
             l_s=0
@@ -215,7 +215,7 @@ def test(test_dataset, Min):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     model = Model.BERT_A()
     # model.load_state_dict(torch.load('Weight/'+str(Min)+'kuzuha_kirinukich_end_padding_truncation.pth'))
-    model.load_state_dict(torch.load('Weight/'+str(Min)+'kuzuha_kirinukich_Wrime無し統合_batch8_val改善_pooling.pth'))
+    model.load_state_dict(torch.load('Weight/'+str(Min)+'kuzuha_kirinukich_Wrime無し統合_batch8_val改善_pooling_使うやつ.pth'))
     model.eval()
     model.to(device)
 
@@ -266,7 +266,7 @@ tp, fp, tn, fn = test(test_dataset, min)
 precision = tp / (tp + fp)
 specificity = tn / (tn + fp)
 recall = tp / (tp + fn)
-
+f=(2*precision*recall)/(precision+recall)
 print(f'True Positive: {tp}')
 print(f'False Positive: {fp}')
 print(f'True Negative: {tn}')
@@ -274,3 +274,5 @@ print(f'False Negative: {fn}')
 print(f'Precision: {precision}')
 print(f'Specificity: {specificity}')
 print(f'Recall: {recall}')
+print(f'F:{f}')
+print(f'精度:{(tp+tn)/(tp+tn+fp+fn)}')

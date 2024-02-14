@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 
 # CSVファイルを読み込む
-df = pd.read_csv("textchat_from_youtube\\wrime無し_統合_前処理完了.csv")
+df = pd.read_csv("入力csvファイルのパス")
 
 # 0のラベルの数を取得
 label_0_count = len(df[df['ラベル'] == 0])
@@ -23,4 +23,4 @@ df_downsampled_label_0 = df[df['ラベル'] == 0]
 df_downsampled = pd.concat([df_downsampled_label_0, df_downsampled_label_1])
 
 # 新しいCSVファイルに保存する
-df_downsampled.to_csv("Wrime無し統合_downsampled.csv", index=False)
+df_downsampled.to_csv("出力csvファイルのパス", index=False)
