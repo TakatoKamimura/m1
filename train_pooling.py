@@ -4,7 +4,7 @@ from tqdm import tqdm
 from torch.utils.data import DataLoader
 from collections import OrderedDict
 from matplotlib import pyplot as plt
-from models import models_pooling_padding as Model
+from models import models_Pooling as Model
 from dataset import dataset_padding as Data
 import os
 import numpy as np
@@ -68,17 +68,10 @@ def train(num_epoch):
     dataset = Data.MyDataset()
     model=Model.BERT_A()
     model.to(device)
-    # model=Model.BERT_B()
     v_loss=[]
     v_acc=[]
     criterion = nn.BCEWithLogitsLoss()
     optimizer = torch.optim.AdamW(params=model.fc.parameters(), lr=1e-3)
-    # bert_top_params = []
-    # for name, param in model.named_parameters():
-    #     if "bert.pooler" in name:
-    #         bert_top_params.append(param)
-    # optimizer.add_param_group({'params':bert_top_params,'lr':1e-3})
-    # Train_dataset,test_dataset=torch.utils.data.random_split(dataset, [int(len(dataset)*0.9), len(dataset)-int(len(dataset)*0.9)])
     train_ratio = 0.8
     val_ratio = 0.1
 
@@ -87,7 +80,6 @@ def train(num_epoch):
     test_size = len(dataset) - train_size - val_size
     torch.manual_seed(42)
     train_dataset, val_dataset, test_dataset = torch.utils.data.random_split(dataset, [train_size, val_size, test_size])
-    return test_dataset,28
     with tqdm(range(num_epoch)) as epoch_bar:
         for epoch in epoch_bar:
             l_s=0
@@ -97,15 +89,12 @@ def train(num_epoch):
             val_loss=AverageMeter()
             val_acc=AverageMeter()
             epoch_bar.set_description("[Epoch %d]" % (epoch))
-            # train_dataset,val_dataset=torch.utils.data.random_split(Train_dataset, [int(len(Train_dataset)*0.9), len(Train_dataset)-int(len(Train_dataset)*0.9)])
             data_loader = DataLoader(train_dataset,batch_size=8,shuffle=True, drop_last=True)
             model.train().to(device)
             with tqdm(enumerate(data_loader),
                       total=len(data_loader),
                       leave=False) as batch_bar:
                 for i, (batch, label,mask) in batch_bar:
-                    # batch = list(batch)#タプルをリストに
-                    #print(batch)
                     batch=batch.to(device)
                     label=label.view(-1,1)
                     label=label.to(device)
@@ -146,7 +135,7 @@ def train(num_epoch):
                     batch_bar.set_postfix(OrderedDict(loss=val_loss.val, acc=val_acc.val))
             v_loss.append(s/len(data_loader))
             v_acc.append(a_s/len(data_loader))
-            torch.save(model.to('cpu').state_dict(), 'Weight/'+str(epoch+1)+'kuzuha_kirinukich_Wrime無し統合_batch8_val改善_pooling.pth')
+            torch.save(model.to('cpu').state_dict(), 'Weight/'+'読み込むパラメータのパス')
         print(v_loss)
         print(v_acc)
         Min=v_loss.index(min(v_loss))+1
@@ -162,7 +151,7 @@ def train(num_epoch):
         plt.ylabel("loss_sum")
         plt.plot(x, y, color = "red", marker = "o", label = "val_loss")
         plt.legend()
-        plt.savefig("loss_acc_png\\Wrime無し統合_batch8_val改善_pooling_valtrain_loss.png")
+        plt.savefig("loss_acc_png\\ファイル名")
         plt.show()
 
         plt.title("acc")
@@ -170,38 +159,10 @@ def train(num_epoch):
         plt.ylabel("acc_sum")
         plt.plot(x, y1, color = "blue", marker = "o", label = "val_acc")
         plt.legend()
-        plt.savefig("loss_acc_png\\Wrime無し統合_batch8_val改善_pooling_valtrain_acc.png")
+        plt.savefig("loss_acc_png\\ファイル名")
         plt.show()
     return test_dataset,Min
 
-
-# def test(test_dataset,Min):
-#     accuracy=0
-#     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-#     # dataset = Data.MyDataset()
-#     model = Model.BERT_A()
-#     model.load_state_dict(torch.load('Weight/'+str(Min)+'kuzuha_kirinukich_end_padding.pth'))
-#     model.eval()
-#     model.to(device)
-#     # Train_dataset,test_dataset=torch.utils.data.random_split(dataset, [int(len(dataset)*0.9), len(dataset)-int(len(dataset)*0.9)])
-#     with tqdm(range(1)) as epoch_bar:
-#         for epoch in epoch_bar:
-#             epoch_bar.set_description("[Epoch %d]" % (epoch))
-#             data_loader = DataLoader(test_dataset,batch_size=1,shuffle=True, drop_last=True)
-#             with tqdm(enumerate(data_loader),
-#                       total=len(data_loader),
-#                       leave=False) as batch_bar:
-#                 for i, (batch, label,mask) in batch_bar:
-#                     # batch = list(batch)#タプルをリストに
-#                     #print(batch)
-#                     label=label.view(-1,1)
-#                     label=label.to(device)
-#                     batch=batch.to(device)
-#                     mask=mask.to(device)
-#                     output = model(batch,attention_mask=mask)#順伝搬
-#                     a=acc2(output,label)
-#                     accuracy+=a
-#     return accuracy/len(test_dataset)
 
 
 def test(test_dataset, Min):
@@ -214,8 +175,7 @@ def test(test_dataset, Min):
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     model = Model.BERT_A()
-    # model.load_state_dict(torch.load('Weight/'+str(Min)+'kuzuha_kirinukich_end_padding_truncation.pth'))
-    model.load_state_dict(torch.load('Weight/'+str(Min)+'kuzuha_kirinukich_Wrime無し統合_batch8_val改善_pooling_使うやつ.pth'))
+    model.load_state_dict(torch.load('Weight/'+'読み込むパラメータのパス'))
     model.eval()
     model.to(device)
 
@@ -261,6 +221,7 @@ def test(test_dataset, Min):
     return true_positive, false_positive, true_negative, false_negative
 test_dataset,min=train(50)
 print(min)
+
 tp, fp, tn, fn = test(test_dataset, min)
 
 precision = tp / (tp + fp)

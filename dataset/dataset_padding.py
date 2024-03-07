@@ -6,7 +6,7 @@ import re
 
 class MyDataset(torch.utils.data.Dataset):
     def __init__(self, df=pd.read_csv("textchat_from_youtube\\Wrime+Youtube_train.csv", usecols=['コメント','ラベル'])):
-        self.tokenizer = BertJapaneseTokenizer.from_pretrained('cl-tohoku/bert-base-japanese-whole-word-masking')
+        self.tokenizer = BertJapaneseTokenizer.from_pretrained('tohoku-nlp/bert-base-japanese-whole-word-masking')
         self.comment = []
         self.input_ids = []
         self.mask = []

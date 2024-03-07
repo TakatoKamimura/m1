@@ -5,28 +5,23 @@ from tqdm import tqdm
 from torch.utils.data import DataLoader
 from collections import OrderedDict
 from matplotlib import pyplot as plt
-from models import model_padding as Model
+from models import model_Linear as Model
 from dataset import movie_dataset_paddhing as Data
 import os
 import numpy as np
 import pandas as pd
 
 
-def pred(num_epoch):
+def pred():
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     dataset = Data.MyDataset()
-    # train_dataset,test_dataset=torch.utils.data.random_split(dataset, [int(len(dataset)*0.9), len(dataset)-int(len(dataset)*0.9)])
-    # data_loader = DataLoader(train_dataset,batch_size=1,shuffle=True, drop_last=True)
     model=Model.BERT_A()
     model.to(device)
-    model.load_state_dict(torch.load('Weight\\37kuzuha_kirinukich_Wrim無し統合_batch8_val改善_使うやつ.pth'))
-    # model=Model.BERT_B()
-    # v_loss=[]
-    # v_acc=[]
+    model.load_state_dict(torch.load('モデルのパラメータファイルのパス'))
     sigmoid = nn.Sigmoid()
     pred=[]
-    df=pd.read_csv('C:\\Users\\admin\\Desktop\\m1\\textchat_from_youtube\\lYJE1CBf_2o(kuzuha_vcc).csv',encoding='utf-8')
-    with tqdm(range(num_epoch)) as epoch_bar:
+    df=pd.read_csv('取得したテキストチャットのcsvファイルのパス',encoding='utf-8')
+    with tqdm(range(1)) as epoch_bar:
         for epoch in epoch_bar:
             epoch_bar.set_description("[Epoch %d]" % (epoch))
             data_loader = DataLoader(dataset,batch_size=10,shuffle=False, drop_last=True)
@@ -54,8 +49,8 @@ def pred(num_epoch):
     print(len(pred))
     print(pred)
     print(df)
-    df.to_csv('textchat_from_youtube\\lYJE1CBf_2o_37kuzuha_kirinukich_Wrim無し統合_batch8_val改善_使うやつ',encoding='utf-8',index=False)
+    df.to_csv('推定結果のcsvの保存先のパス',encoding='utf-8',index=False)
 
                 
 
-pred(1)
+pred()

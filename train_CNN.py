@@ -4,7 +4,7 @@ from tqdm import tqdm
 from torch.utils.data import DataLoader
 from collections import OrderedDict
 from matplotlib import pyplot as plt
-from models import model_padding as Model
+from models import models_CNN as Model
 from dataset import dataset_padding as Data
 import os
 import numpy as np
@@ -45,42 +45,23 @@ def acc(input, labels):
     acc = torch.sum(output == labels).item()  # 正しい予測数を計算
     return acc/8
 
-def acc2(input, labels):
-    bs = input.size(0)
-    # print(bs)
-    sigmoid = nn.Sigmoid()
-    output=sigmoid(input)
-    output = list(output)
-    preds = []
-    for out in output:
-        if out >= 0.5:
-            preds.append(1)
-        else:
-            preds.append(0)
-    preds = torch.Tensor(preds)
-    device=labels.device
-    preds=preds.to(device)
-
-    acc = preds.eq(labels).sum().item()
-    return acc / 8
-
 def train(num_epoch):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     dataset = Data.MyDataset()
     model=Model.BERT_A()
     model.to(device)
-    # model=Model.BERT_B()
     v_loss=[]
     v_acc=[]
     criterion = nn.BCEWithLogitsLoss()
-    optimizer = torch.optim.AdamW(params=model.fc.parameters(), lr=1e-3)
+    optimizer = torch.optim.AdamW(params=model.parameters(), lr=1e-3)
+    for param in model.bert.parameters():
+        param.requires_grad = False
     train_ratio = 0.8
     val_ratio = 0.1
-
+    torch.manual_seed(42)
     train_size = math.ceil(len(dataset) * train_ratio)
     val_size = math.ceil(len(dataset) * val_ratio)
     test_size = len(dataset) - train_size - val_size
-    torch.manual_seed(42)
     train_dataset, val_dataset, test_dataset = torch.utils.data.random_split(dataset, [train_size, val_size, test_size])
     with tqdm(range(num_epoch)) as epoch_bar:
         for epoch in epoch_bar:
@@ -89,7 +70,6 @@ def train(num_epoch):
             val_loss=AverageMeter()
             val_acc=AverageMeter()
             epoch_bar.set_description("[Epoch %d]" % (epoch))
-            # train_dataset,val_dataset=torch.utils.data.random_split(Train_dataset, [int(len(Train_dataset)*0.9), len(Train_dataset)-int(len(Train_dataset)*0.9)])
             data_loader = DataLoader(train_dataset,batch_size=8,shuffle=True, drop_last=True)
             model.train().to(device)
             with tqdm(enumerate(data_loader),
@@ -103,11 +83,13 @@ def train(num_epoch):
                     label=label.to(device)
                     mask=mask.to(device)
                     optimizer.zero_grad()#勾配の初期化
-                    output = model(batch,attention_mask=mask)#順伝搬
+                    output = model(batch,mask)#順伝搬
                     loss = criterion(output, label)#損失の計算
                     loss.backward()#誤差逆伝搬
                     optimizer.step()#重みの更新
                     train_loss.update(loss,8)
+                    #output = sigmoid(output.detach())
+                    #print(output)
                     a=acc(output,label)
                     # print(a)
                     train_acc.update(a*8, 8)
@@ -126,17 +108,18 @@ def train(num_epoch):
                     label=label.to(device)
                     batch=batch.to(device)
                     mask=mask.to(device)
-                    output = model(batch,attention_mask=mask)#順伝搬
+                    output = model(batch,mask)#順伝搬
                     loss = criterion(output, label)#損失の計算
                     s+=loss.item()
-                    val_loss.update(loss,1)
+                    val_loss.update(loss,8)
                     a=acc(output,label)
+                    # print(a)
                     a_s+=a
-                    val_acc.update(a*8, 8)
+                    val_acc.update(a, 8)
                     batch_bar.set_postfix(OrderedDict(loss=val_loss.val, acc=val_acc.val))
             v_loss.append(s/len(data_loader))
             v_acc.append(a_s/len(data_loader))
-            torch.save(model.to('cpu').state_dict(), 'Weight/'+'保存したいファイル名')
+            torch.save(model.to('cpu').state_dict(), 'パラメータの保存先のパス')
         print(v_loss)
         print(v_acc)
         Min=v_loss.index(min(v_loss))+1
@@ -149,20 +132,19 @@ def train(num_epoch):
         y1=np.array(v_acc)
         plt.title("loss")
         plt.xlabel("epoch")
-        plt.ylabel("loss_sum")
-        plt.plot(x, y, color = "red", marker = "o", label = "val_loss")
+        plt.plot(x, y, color = "red", marker = "o", label = "Array elements")
         plt.legend()
-        plt.savefig("loss_acc_png\\保存したいファイル名")
+        plt.savefig("画像保存先のパス")
         plt.show()
 
         plt.title("acc")
         plt.xlabel("epoch")
-        plt.ylabel("acc_sum")
-        plt.plot(x, y1, color = "blue", marker = "o", label = "val_acc")
+        plt.plot(x, y1, color = "blue", marker = "o", label = "Array elements")
         plt.legend()
-        plt.savefig("loss_acc_png\\保存したいファイル名")
+        plt.savefig("画像保存先のパス")
         plt.show()
     return test_dataset,Min
+
 
 
 def test(test_dataset, Min):
@@ -175,10 +157,9 @@ def test(test_dataset, Min):
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     model = Model.BERT_A()
-    model.to(device)
-    model.load_state_dict(torch.load('Weight/'+'読み込みたいファイル名'))
+    model.load_state_dict(torch.load('読み込むパラメータのパス'))
     model.eval()
-
+    model.to(device)
 
     with tqdm(range(1)) as epoch_bar:
         for epoch in epoch_bar:
@@ -194,7 +175,7 @@ def test(test_dataset, Min):
                     batch = batch.to(device)
                     mask = mask.to(device)
 
-                    output = model(batch, attention_mask=mask)
+                    output = model(batch, mask)
                     output=sigmoid(output)
                     if output.item()>=0.5:
                         output=1
@@ -220,20 +201,13 @@ def test(test_dataset, Min):
                     false_negative += fn
 
     return true_positive, false_positive, true_negative, false_negative
-
-test_dataset,min=train(50)
+test_dataset,min=train(10)
 print(min)
-
 tp, fp, tn, fn = test(test_dataset, min)
 
 precision = tp / (tp + fp)
 specificity = tn / (tn + fp)
 recall = tp / (tp + fn)
-
-precision = tp / (tp + fp)
-specificity = tn / (tn + fp)
-recall = tp / (tp + fn)
-f=(2*precision*recall)/(precision+recall)
 
 print(f'True Positive: {tp}')
 print(f'False Positive: {fp}')
@@ -242,5 +216,4 @@ print(f'False Negative: {fn}')
 print(f'Precision: {precision}')
 print(f'Specificity: {specificity}')
 print(f'Recall: {recall}')
-print(f'F:{f}')
 print(f'精度:{(tp+tn)/(tp+tn+fp+fn)}')

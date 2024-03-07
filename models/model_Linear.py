@@ -1,5 +1,5 @@
 from transformers import BertJapaneseTokenizer,BertForSequenceClassification, AdamW, BertConfig,BertModel
-from transformers import BertJapaneseTokenizer,BertModel
+from transformers import BertModel
 import torch
 import torch.nn as nn
 
@@ -7,7 +7,7 @@ import torch.nn as nn
 class BERT_A(nn.Module): 
     def __init__(self):
         super().__init__()
-        self.bert=BertModel.from_pretrained('cl-tohoku/bert-base-japanese-whole-word-masking')
+        self.bert=BertModel.from_pretrained('tohoku-nlp/bert-base-japanese-whole-word-masking')
         self.fc=nn.Linear(768,1)
 
         

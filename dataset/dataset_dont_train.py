@@ -5,7 +5,7 @@ from transformers import BertJapaneseTokenizer
 
 
 class MyDataset(torch.utils.data.Dataset):
-    def __init__(self, df=pd.read_csv("textchat_from_youtube\\lYJE1CBf_2o_開始40分_BERT_Linear_output.csv",usecols=['コメント','時間'])):
+    def __init__(self, df=pd.read_csv("学習に使うテキストチャットのcsvファイルのパス",usecols=['コメント','時間'])):
         self.comment = df["コメント"]
         self.time=df["時間"]
 

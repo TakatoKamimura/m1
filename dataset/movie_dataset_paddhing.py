@@ -5,8 +5,8 @@ from transformers import BertJapaneseTokenizer
 import re
 
 class MyDataset(torch.utils.data.Dataset):
-    def __init__(self, df=pd.read_csv("C:\\Users\\admin\\Desktop\\m1\\textchat_from_youtube\\lYJE1CBf_2o(kuzuha_vcc).csv", usecols=['コメント'])):
-        self.tokenizer = BertJapaneseTokenizer.from_pretrained('cl-tohoku/bert-base-japanese-whole-word-masking')
+    def __init__(self, df=pd.read_csv("推定を行いたいテキストチャットのcsvファイルのパス", usecols=['コメント'])):
+        self.tokenizer = BertJapaneseTokenizer.from_pretrained('tohoku-nlp/bert-base-japanese-whole-word-masking')
         self.comment = []
         self.mask = []
         for comment in df["コメント"]:
@@ -18,8 +18,6 @@ class MyDataset(torch.utils.data.Dataset):
             self.mask.append(mask)
             bert_tokens = torch.tensor(bert_tokens['input_ids'])
             self.comment.append(bert_tokens)
-        # self.max_length = max_length  # この行は不要
-        # self.labels = torch.tensor(df["ラベル"].astype('float32'))
 
     def __len__(self):
         return len(self.comment)

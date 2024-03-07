@@ -17,9 +17,11 @@ while stream.is_alive():
   data = stream.get()
   items = data.items
   for c in items:
+    # URLを含む表現を取得しない
     pattern = re.compile(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+')
     if re.search(pattern,c.message):
       continue
+    # スタンプのみを取得しない
     result = re.sub(':.*?:', '', c.message)
     if len(result)<1:
       continue

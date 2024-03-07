@@ -45,15 +45,13 @@ print(sum(end - start for start, end in section))
 list_as_string = ",".join([str(sublist) for sublist in section])
 
 # テキストファイルに書き込み
-with open("lYJE1CBf_2o_37kuzuha_kirinukich_Wrim無し統合_batch8_val改善_使うやつ _ランダム.txt", "w") as file:
+with open("出力ファイルのパス", "w") as file:
     file.write(list_as_string)
 print(total_length)
 a=[]
 for i,v in enumerate(section):
     editor=ed(v[0],v[1])
     a.append(ed.cut(v[0],v[1]))
-# editor=ed(60*165,60*165+30)
-# a.append(ed.cut(60*165,60*165+30))
 b=ed.concatenate(a)
 ed.save(b)
 
